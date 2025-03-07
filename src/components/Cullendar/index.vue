@@ -23,8 +23,9 @@
             <span class="truncate">Resource {{ index }}</span>
           </div>
 
-          <div v-for="date in dates" :key="date" class="h-full w-52 p-1 flex">
-            <div class="flex items-center justify-center flex-1 bg-slate-50 rounded-lg">+</div>
+          <div v-for="(date, index) in dates" :key="date" class="h-full w-52 p-1 flex">
+            <Event v-if="data.events[index]"/>
+            <div v-else class="flex items-center justify-center flex-1 bg-slate-50 text-slate-500 rounded-lg">+</div>
           </div>
 
         </div>
@@ -44,6 +45,7 @@ import { useVirtualList } from '@vueuse/core'
 import { eachDayOfInterval, endOfWeek, startOfWeek } from 'date-fns'
 // Components
 import DayHead from './DayHead'
+import Event from './Event'
 
 const props = defineProps({
   resources: {
@@ -67,7 +69,7 @@ const OPTIONS = {
 
 const { list, containerProps, wrapperProps } = useVirtualList(props.resources, { itemHeight: 48 })
 
-const dates = eachDayOfInterval({ start: startOfWeek(new Date(), { weekStartsOn: OPTIONS.firstDayOfWeek }), end: endOfWeek(new Date(), { firstDayOfWeek: OPTIONS.weekStartsOn }) })
+const dates = eachDayOfInterval({ start: startOfWeek(new Date(), { weekStartsOn: OPTIONS.firstDayOfWeek }), end: endOfWeek(new Date(), { weekStartsOn: OPTIONS.firstDayOfWeek }) })
 
 defineOptions({ name: 'Cullendar' })
 </script>

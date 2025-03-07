@@ -14,7 +14,7 @@ const resources = ref(Array.from({ length: 1000 }).map((v, i) => toResource(i)))
 function toResource(id) {
   return {
     id,
-    events: [1, 2, 3, 4, 5]
+    events: Array.from({ length: 7 }, () => Math.floor(Math.random() * 2))
   }
 }
 
