@@ -18,4 +18,6 @@ const props = defineProps({
 })
 
 const label = computed(() => `${formatTime(new Date(props.event.start)) } ⇢ ${formatTime(new Date(props.event.end))}`)
+
+console.log('rendered an event', props.event.id)
 </script>
