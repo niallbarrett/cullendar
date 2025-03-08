@@ -1,11 +1,14 @@
 <template>
-  <div class="p-1 text-slate-500">
+  <div class="py-1 px-2 text-slate-500">
     {{ label }}
   </div>
 </template>
 
 <script setup>
+// Libraries
 import { computed } from 'vue'
+// Utils
+import formatDate from '../utils/FormatDate'
 
 const props = defineProps({
   date: {
@@ -20,5 +23,5 @@ const OPTIONS = {
   month: '2-digit'
 }
 
-const label = computed(() => new Intl.DateTimeFormat(undefined, OPTIONS).format(props.date))
+const label = computed(() => formatDate(new Date(props.date), OPTIONS))
 </script>
