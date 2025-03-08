@@ -1,5 +1,5 @@
 <template>
-  <div class="py-1 px-2 bg-white text-slate-500">
+  <div class="p-2 bg-white text-slate-500">
     {{ label }}
   </div>
 </template>

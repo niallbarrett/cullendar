@@ -1,6 +1,5 @@
 <template>
-  <div class="h-screen p-20">
-    <input v-model.number="nWeeks" type="number">
+  <div class="h-screen p-12">
     <button @click="test">Test</button>
     <Cullendar
       :resources="resources"
@@ -13,12 +12,10 @@
 import { ref, reactive } from 'vue'
 import Cullendar from '@/components/Cullendar'
 
-const nWeeks = ref(1)
-
 const resources = ref([])
 const events = ref([])
 const config = reactive({
-  nWeeks: nWeeks,
+  nWeeks: 2,
   onDateClick: addEvent,
   onEventClick: viewEvent
 })

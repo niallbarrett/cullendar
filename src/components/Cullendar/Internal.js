@@ -38,10 +38,7 @@ function buildDates(options) {
     end: endOfWeek(addWeeks(start, options.nWeeks - 1), { weekStartsOn: options.firstDayOfWeek })
   }
 
-  const yo = eachDayOfInterval(interval).map(toISODate)
-  console.log(options.date, yo)
-
-  return yo
+  return eachDayOfInterval(interval).map(toISODate)
 }
 
 export {
