@@ -1,5 +1,5 @@
 <template>
-  <div class="ev p-1 flex-1 bg-white border border-slate-200 rounded-xl leading-none">
+  <div class="ev p-1 flex-1 bg-white border border-slate-200 rounded-xl leading-none select-none hover:border-blue-500">
     <span class="text-xs">{{ label }}</span>
   </div>
 </template>

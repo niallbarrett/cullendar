@@ -1,7 +1,11 @@
 // Libraries
 import { addWeeks, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns'
+// Composables
+import useCullendar from './composables/Cullendar'
 // Utils
 import toISODate from "./utils/toISODate"
+
+const { dates, startDate, endDate } = useCullendar()
 
 const DEFAULT_CONFIG = {
   date: toISODate(new Date()),
@@ -38,7 +42,11 @@ function buildDates(options) {
     end: endOfWeek(addWeeks(start, options.nWeeks - 1), { weekStartsOn: options.firstDayOfWeek })
   }
 
-  return eachDayOfInterval(interval).map(toISODate)
+  dates.value = eachDayOfInterval(interval).map(toISODate)
+  startDate.value = dates.value.at(0)
+  endDate.value = dates.value.at(-1)
+
+  return dates.value
 }
 
 export {
