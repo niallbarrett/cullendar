@@ -46,6 +46,8 @@ function buildDates(options) {
   startDate.value = dates.value.at(0)
   endDate.value = dates.value.at(-1)
 
+  options?.onView?.({ nWeeks: options.nWeeks, start: startDate.value, end: endDate.value, dates: dates.value })
+
   return dates.value
 }
 

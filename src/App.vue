@@ -21,18 +21,17 @@ import Cullendar from '@/components/Cullendar'
 const resources = ref([])
 const events = ref([])
 const config = reactive({
-  nWeeks: 2,
+  nWeeks: 1,
   onDateClick: addEvent,
-  onEventClick: viewEvent
+  onEventClick: viewEvent,
+  onView: (e) => buildDemo(e.dates)
 })
 
 const { startDate, endDate } = useCullendar()
 
-buildDemo()
-
-function buildDemo() {
-  const r = Array.from({ length: 1000 }).map((v, i) => toResource(i))
-  const e = r.map((r, i) => toEvent(i, r.id))
+function buildDemo(dates) {
+  const r = Array.from({ length: 100 }).map((v, i) => toResource(i))
+  const e = r.flatMap((r, i) => dates.slice(1).map(d => toEvent(i, r.id, d)))
 
   resources.value = r
   events.value = e
@@ -45,18 +44,18 @@ function toResource(id) {
     title: 'Resource ' + (id + 1)
   }
 }
-function toEvent(id, resourceId) {
+function toEvent(id, resourceId, date) {
   return {
     id: String(id),
-    start: '2025-03-08 09:00',
-    end: '2025-03-08 13:00',
+    start: date + ' 09:00',
+    end: date + ' 13:00',
     resourceId
   }
 }
 function addEvent({ resource, date }) {
-  const ev = toEvent(events.value.length, resource.id)
-  ev.start = date + ' 09:15'
-  ev.end = date + ' 14:15'
+  const ev = toEvent(events.value.length, resource.id, date)
+  ev.start = ev.start.split(' ')[0] + ' 09:15'
+  ev.end = ev.end.split(' ')[0] + ' 14:15'
 
   events.value.push(ev)
 }
@@ -64,7 +63,7 @@ function viewEvent({ event }) {
   alert(JSON.stringify(event))
 }
 function test() {
-  config.nWeeks = 3
+  config.nWeeks = 4
   // const ev = events.value[0]
   // const st = ev.start.split(' ')
 
