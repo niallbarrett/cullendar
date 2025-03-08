@@ -1,4 +1,16 @@
-function build(resources, events) {
+// Libraries
+import { addWeeks, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns'
+// Utils
+import toISODate from "./utils/toISODate"
+
+const DEFAULT_CONFIG = {
+  date: toISODate(new Date()),
+  timezone: 'Europe/Dublin',
+  nWeeks: 1,
+  firstDayOfWeek: 1
+}
+
+function buildLanes(resources, events) {
   const eventMap = buildEventMap(events)
 
   return resources.map(resource => ({ ...resource, events: eventMap.get(resource.id) }))
@@ -19,4 +31,21 @@ function buildEventMap(events) {
   return mappy
 }
 
-export { build }
+function buildDates(options) {
+  const start = startOfWeek(options.date, { weekStartsOn: options.firstDayOfWeek })
+  const interval = {
+    start,
+    end: endOfWeek(addWeeks(start, options.nWeeks - 1), { weekStartsOn: options.firstDayOfWeek })
+  }
+
+  const yo = eachDayOfInterval(interval).map(toISODate)
+  console.log(options.date, yo)
+
+  return yo
+}
+
+export {
+  DEFAULT_CONFIG,
+  buildLanes,
+  buildDates
+}

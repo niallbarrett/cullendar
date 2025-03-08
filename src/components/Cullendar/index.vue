@@ -3,12 +3,12 @@
 
     <div v-bind="containerProps" class="flex-1 overflow-auto">
 
-      <div class="flex sticky top-0">
-        <div class="w-60 sticky left-0 bg-white border-r border-slate-100 z-1 shrink-0"/>
+      <div class="min-w-full w-max flex sticky top-0 z-1">
+        <div class="w-60 sticky left-0 shrink-0 border-r border-slate-100 bg-white"/>
 
         <template v-for="date in dates">
           <slot name="dayHead" v-bind="{ date }">
-            <DayHead :key="date" :date="date" class="min-w-48 flex-1"/>
+            <DayHead :key="date" :date="date" class="min-w-40 flex-1"/>
           </slot>
         </template>
 
@@ -20,16 +20,16 @@
         <div
           v-for="{ index, data: resource } in list"
           :key="index"
-          class="x h-12 flex">
+          class="x h-12 min-w-full w-max flex">
 
           <!--Resource slot -->
-          <div class="w-60 p-2 flex items-center gap-1 sticky left-0 bg-white border-r border-slate-100 shrink-0 z-1">
+          <div class="w-60 py-1 px-2 flex items-center gap-1 sticky left-0 bg-white border-r border-slate-100 shrink-0 z-1">
             <span class="size-6 rounded-full bg-slate-100"/>
             <span class="truncate">{{ resource.title }}</span>
           </div>
 
           <!-- For each day -->
-          <div v-for="date in dates" :key="date" class="h-full min-w-48 p-1 flex flex-1">
+          <div v-for="date in dates" :key="date" class="h-full min-w-40 p-1 flex flex-1">
 
             <div class="flex gap-px flex-1 rounded-xl empty:bg-slate-50 empty:hover:bg-sky-50" @click.self="onDateClick({ resource, date })">
 
@@ -57,8 +57,7 @@
 // Libraries
 import { computed, defineOptions } from 'vue'
 import { useVirtualList } from '@vueuse/core'
-import { eachDayOfInterval, endOfWeek, startOfWeek } from 'date-fns'
-import { build } from './Internal'
+import { DEFAULT_CONFIG, buildLanes, buildDates } from './Internal'
 // Utils
 import toISODate from './utils/toISODate'
 // Components
@@ -80,15 +79,11 @@ const props = defineProps({
   }
 })
 
-const OPTIONS = {
-  view: 'week',
-  firstDayOfWeek: 1
-}
+const options = computed(() => ({ ...DEFAULT_CONFIG, ...props.config }))
+const dates = computed(() => buildDates(options.value))
+const lanes = computed(() => buildLanes(props.resources, props.events))
 
-const test = computed(() => build(props.resources, props.events))
-const dates = eachDayOfInterval({ start: startOfWeek(new Date(), { weekStartsOn: OPTIONS.firstDayOfWeek }), end: endOfWeek(new Date(), { weekStartsOn: OPTIONS.firstDayOfWeek }) }).map(toISODate)
-
-const { list, containerProps, wrapperProps, scrollTo } = useVirtualList(test, { itemHeight: 48 })
+const { list, containerProps, wrapperProps, scrollTo } = useVirtualList(lanes, { itemHeight: 48 })
 
 function onDateClick(payload) {
   props.config?.onDateClick?.(payload)
