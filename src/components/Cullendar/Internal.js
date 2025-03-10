@@ -16,8 +16,19 @@ const DEFAULT_CONFIG = {
 
 function buildLanes(resources, events) {
   const eventMap = buildEventMap(events)
+  const r = buildResources(resources)
 
-  return resources.map(resource => ({ ...resource, events: eventMap.get(resource.id) }))
+  return r.map(resource => ({ ...resource, events: eventMap.get(resource.id) }))
+}
+
+function buildResources(resources) {
+  return resources.flatMap(resource => {
+    if (!resource.resources)
+      return [resource]
+
+    resource.isGroup = true
+    return [resource, ...resource.resources]
+  })
 }
 
 function buildEventMap(events) {

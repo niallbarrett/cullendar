@@ -6,7 +6,8 @@
     <Cullendar
       :resources="resources"
       :events="events"
-      :config="config"/>
+      :config="config"
+      class="border border-black rounded-xl"/>
   </div>
 </template>
 
@@ -30,20 +31,27 @@ const config = reactive({
 const { startDate, endDate } = useCullendar()
 
 function buildDemo(dates) {
-  const r = Array.from({ length: 100 }).map((v, i) => toResource(i))
-  const e = r.flatMap((r, i) => dates.slice(1).map(d => toEvent(i, r.id, d)))
+  const r = Array.from({ length: 10 }).map((v, i) => toResourceGroup(i))
+  const e = r.flatMap((r, i) => dates.slice(1).map(d => toEvent(i, r.id + '-1', d)))
 
   resources.value = r
   events.value = e
-  // events.value = [toEvent(0, ['0', '1', '2'])]
 }
 
-function toResource(id) {
+function toResourceGroup(id) {
   return {
     id: String(id),
-    title: 'Resource ' + (id + 1)
+    label: 'Group ' + (id + 1),
+    resources: Array.from({ length: 10 }).map((v, i) => toResource(id, i))
   }
 }
+function toResource(groupId, id) {
+  return {
+    id: `${groupId}-${id}`,
+    label: 'Resource ' + (id + 1)
+  }
+}
+
 function toEvent(id, resourceId, date) {
   return {
     id: String(id),
