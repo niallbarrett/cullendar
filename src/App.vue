@@ -5,7 +5,11 @@
       :resources="resources"
       :events="events"
       :config="config"
-      class="border border-black rounded-xl"/>
+      class="bg-white border border-black rounded-xl text-sm">
+      <template #event="{ event }">
+        <Event :event="event"/>
+      </template>
+    </Cullendar>
   </div>
 </template>
 
@@ -14,6 +18,7 @@
 import { ref, reactive } from 'vue'
 // Components
 import Cullendar from '@/components/Cullendar'
+import Event from './components/Event'
 
 const nWeeks = ref(4)
 const resources = ref([])

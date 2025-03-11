@@ -1,6 +1,5 @@
 <template>
-  <div class="h-full px-2 flex items-center gap-1 shrink-0">
-    <span class="size-6 rounded-full bg-slate-100"/>
+  <div class="cullendar-resource">
     <span class="truncate">{{ resource.label }}</span>
   </div>
 </template>
@@ -13,3 +12,12 @@ defineProps({
   }
 })
 </script>
+
+<style scoped>
+.cullendar-resource {
+  height: 100%;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+}
+</style>

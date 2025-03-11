@@ -1,11 +1,9 @@
 <template>
-  <div class="h-full flex bg-white text-sm overflow-hidden">
-
-    <VirtualRow
+  <div class="cullendar">
+    <Resources
       v-slot="{ resource }"
       ref="jo"
       :rows="lanes"
-      class="w-60"
       @scroll="e => onScroll(true, e)">
 
       <slot v-if="resource.isGroup" name="resourceGroup" v-bind="{ resource }">
@@ -16,14 +14,13 @@
         <Resource :resource="resource"/>
       </slot>
 
-    </VirtualRow>
+    </Resources>
 
-    <VirtualGrid
+    <Timeline
       v-slot="{ resource, date }"
       ref="yo"
       :rows="lanes"
       :columns="dates"
-      class="flex-1"
       @scroll="e => onScroll(false, e)">
 
       <DayHead v-if="resource.isDate" :date="date"/>
@@ -34,13 +31,10 @@
         :resource="resource"
         :date="date"
         @date="onDateClick">
-        <slot name="event" v-bind="{ resource, event, date }">
-          <Event :event="event"/>
-        </slot>
+        <slot name="event" v-bind="{ resource, event, date }"/>
       </Day>
 
-    </VirtualGrid>
-
+    </Timeline>
   </div>
 </template>
 
@@ -49,13 +43,12 @@
 import { ref, computed, defineOptions } from 'vue'
 import { DEFAULT_CONFIG, buildLanes, buildDates } from './Internal'
 // Components
-import VirtualGrid from './components/VirtualGrid'
-import VirtualRow from './components/VirtualRow'
+import Timeline from './Timeline'
+import Resources from './Resources'
 import DayHead from './components/DayHead'
 import Day from './components/Day'
 import ResourceGroup from './components/ResourceGroup'
 import Resource from './components/Resource'
-import Event from './components/Event'
 
 const props = defineProps({
   resources: {
@@ -94,3 +87,11 @@ function onDateClick(payload) {
 
 defineOptions({ name: 'Cullendar' })
 </script>
+
+<style scoped>
+  .cullendar {
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+  }
+</style>

@@ -1,6 +1,8 @@
 <template>
-  <div class="h-full p-1 flex">
-    <div class="min-w-0 flex flex-1 rounded-xl empty:bg-slate-50 empty:hover:bg-sky-50" @click.self="emit('date', { resource, date })">
+  <div class="cullendar-resources-day">
+    <div
+      class="cullendar-resources-day-wrapper"
+      @click.self="emit('date', { resource, date })">
       <template v-for="event in resource.events" :key="event.id">
         <slot
           v-if="toISODate(event.start) === date"
@@ -26,3 +28,16 @@ defineProps({
 
 const emit = defineEmits(['date'])
 </script>
+
+<style scoped>
+  .cullendar-resources-day {
+    height: 100%;
+    padding: 4px;
+    display: flex;
+  }
+  .cullendar-resources-day-wrapper {
+    min-width: 0;
+    display: flex;
+    flex: 1;
+  }
+</style>
