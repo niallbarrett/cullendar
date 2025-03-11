@@ -1,5 +1,5 @@
 <template>
-  <div ref="parentRef" class="overflow-y-auto">
+  <div ref="parentRef" class="overflow-y-auto overflow-x-scroll">
     <div class="w-full relative" :style="{ height: `${totalSize}px` }">
       <div
         v-for="virtualRow in virtualRows"
@@ -9,7 +9,7 @@
           height: `${virtualRow.size}px`,
           transform: `translateY(${virtualRow.start}px)`,
         }">
-        <slot v-bind="{ resource: rows[virtualRow.index] }"/>
+        <slot v-if="!rows[virtualRow.index].isDate" v-bind="{ resource: rows[virtualRow.index] }"/>
       </div>
     </div>
   </div>

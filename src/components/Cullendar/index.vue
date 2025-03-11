@@ -26,15 +26,18 @@
       class="flex-1"
       @scroll="e => onScroll(false, e)">
 
-      <div v-if="!resource.isGroup" class="h-full p-1 flex">
-        <div class="min-w-0 flex flex-1 rounded-xl empty:bg-slate-50 empty:hover:bg-sky-50" @click.self="onDateClick({ resource, date })">
-          <template v-for="event in resource.events" :key="event.id">
-            <slot v-if="toISODate(event.start) === date" name="event" v-bind="{ resource, event, date }">
-              <Event :event="event"/>
-            </slot>
-          </template>
-        </div>
-      </div>
+      <DayHead v-if="resource.isDate" :date="date"/>
+
+      <Day
+        v-else-if="!resource.isGroup"
+        v-slot="{ event }"
+        :resource="resource"
+        :date="date"
+        @date="onDateClick">
+        <slot name="event" v-bind="{ resource, event, date }">
+          <Event :event="event"/>
+        </slot>
+      </Day>
 
     </VirtualGrid>
 
@@ -45,11 +48,11 @@
 // Libraries
 import { ref, computed, defineOptions } from 'vue'
 import { DEFAULT_CONFIG, buildLanes, buildDates } from './Internal'
-// Utils
-import toISODate from './utils/ToISODate'
 // Components
 import VirtualGrid from './components/VirtualGrid'
 import VirtualRow from './components/VirtualRow'
+import DayHead from './components/DayHead'
+import Day from './components/Day'
 import ResourceGroup from './components/ResourceGroup'
 import Resource from './components/Resource'
 import Event from './components/Event'
@@ -66,6 +69,10 @@ const props = defineProps({
   config: {
     type: Object,
     default: () => ({})
+  },
+  loading: {
+    type: Boolean, // TODO: Loading state
+    default: false
   }
 })
 

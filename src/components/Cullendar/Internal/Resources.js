@@ -10,7 +10,6 @@ function toResource(val) {
   return {
     ...val,
     isGroup,
-    class: isGroup ? 'h-6' : 'h-12', // TODO: De-tailwindify,
     size: isGroup ? 24 : 48
   }
 }

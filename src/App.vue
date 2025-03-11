@@ -15,7 +15,7 @@ import { ref, reactive } from 'vue'
 // Components
 import Cullendar from '@/components/Cullendar'
 
-const nWeeks = ref(1)
+const nWeeks = ref(4)
 const resources = ref([])
 const events = ref([])
 const config = reactive({
@@ -26,11 +26,11 @@ const config = reactive({
 
 function buildDemo(dates) {
   const r = Array.from({ length: 10 }).map((v, i) => toResourceGroup(i))
-  const c = r.flatMap(r => r.resources)
-  const e = c.flatMap((r, i) => dates.slice(1).map(d => toEvent(i, r.id, d)))
+  // const c = r.flatMap(r => r.resources)
+  // const e = c.flatMap((r, i) => dates.slice(1).map(d => toEvent(i, r.id, d)))
 
   resources.value = r
-  events.value = e
+  events.value = []
 }
 
 function toResourceGroup(id) {
