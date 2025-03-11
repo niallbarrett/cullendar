@@ -3,6 +3,7 @@
     <div class="flex">
       <input v-model="date" type="date"/>
       <input v-model="nWeeks" type="number" min="1"/>
+      <input v-model="firstDayOfWeek" type="number" min="1"/>
     </div>
     <Cullendar
       :resources="resources"
@@ -15,7 +16,7 @@
         </div>
       </template>
       <template #resourceGroup="{ resource }">
-        <div class="h-full px-2 flex items-center text-xs text-slate-500">
+        <div class="h-full px-2 flex items-center text-slate-500" @click="onTest(resource)">
           <span class="truncate">{{ resource.label }}</span>
         </div>
       </template>
@@ -44,12 +45,14 @@ const NO_CHILDREN = 5
 
 const date = ref('2025-03-12')
 const nWeeks = ref(1)
+const firstDayOfWeek = ref(1)
 
 const resources = ref([])
 const events = ref([])
 const config = reactive({
   date,
   nWeeks,
+  firstDayOfWeek,
   onDateClick: addEvent,
   onView: (e) => console.log('view', e)
 })
@@ -71,7 +74,8 @@ function toResourceGroup(id) {
   return {
     id: String(id),
     label: 'Group ' + (id + 1),
-    resources: Array.from({ length: NO_CHILDREN }).map((v, i) => toResource(id, i))
+    resources: Array.from({ length: NO_CHILDREN }).map((v, i) => toResource(id, i)),
+    isCollapsed: !!(id % 2)
   }
 }
 function toResource(groupId, id) {
@@ -95,5 +99,10 @@ function addEvent({ resource, date }) {
   ev.end = ev.end.split(' ')[0] + ' 14:15'
 
   events.value.push(ev)
+}
+function onTest(res) {
+  const r = resources.value.find(v => v.id === res.id)
+
+  r.isCollapsed = !r.isCollapsed
 }
 </script>

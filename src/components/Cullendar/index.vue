@@ -4,7 +4,7 @@
       v-slot="{ resource }"
       ref="resourcesRef"
       :rows="lanes"
-      @scroll="syncScroll('resources', $event)">
+      @scroll.passive="syncScroll('resources', $event)">
       <slot v-if="resource.isGroup" name="resourceGroup" v-bind="{ resource }"/>
       <slot v-else name="resource" v-bind="{ resource }"/>
     </Resources>
@@ -13,7 +13,7 @@
       ref="timelineRef"
       :rows="lanes"
       :columns="dates"
-      @scroll="syncScroll('timeline', $event)">
+      @scroll.passive="syncScroll('timeline', $event)">
 
       <template #dayHead="{ date }">
         <slot name="dayHead" v-bind="{ date }"/>
@@ -44,7 +44,9 @@
 <script setup>
 // Libraries
 import { ref, computed, defineOptions } from 'vue'
-import { DEFAULT_CONFIG, buildLanes, buildDates } from './Internal'
+import { buildLanes } from './api'
+import { build as buildConfig } from './api/Config'
+import { build as buildDates } from './api/Dates'
 // Utils
 import toISODate from '@/components/Cullendar/utils/ToISODate'
 // Components
@@ -69,8 +71,8 @@ const props = defineProps({
 const resourcesRef = ref()
 const timelineRef = ref()
 
-const options = computed(() => ({ ...DEFAULT_CONFIG, ...props.config }))
-const dates = computed(() => buildDates(options.value))
+const mergedConfig = computed(() => buildConfig(props.config))
+const dates = computed(() => buildDates(mergedConfig.value))
 const lanes = computed(() => buildLanes(props.resources, props.events))
 
 function syncScroll(source, e) {

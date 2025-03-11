@@ -94,7 +94,7 @@ function toColStyle(row, col) {
 <style scoped>
   .cullendar-timeline {
     flex: 1;
-    overflow: auto;
+    overflow: scroll;
   }
   .cullendar-timeline-wrapper {
     position: relative;

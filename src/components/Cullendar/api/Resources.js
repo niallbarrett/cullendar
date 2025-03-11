@@ -1,5 +1,5 @@
 function build(arr) {
-  const resources = arr.flatMap(val => !val.resources ? [toResource(val)] : [toResource(val), ...val.resources.map(r => toResource(r))])
+  const resources = arr.flatMap(val => !val.resources ? [toResource(val)] : [toResource(val), ...(val.isCollapsed ? [] : val.resources.map(r => toResource(r)))])
 
   return resources.sort((a, b) => b.nOrder - a.nOrder) // TODO: Group nOrder and child nOrder
 }
