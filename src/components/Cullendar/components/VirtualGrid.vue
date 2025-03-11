@@ -1,5 +1,5 @@
 <template>
-  <div ref="parentRef" class="overflow-auto" @click="onLog">
+  <div ref="parentRef" class="overflow-auto">
     <div
       :style="{
         height: `${totalSizeRows}px`,
@@ -13,7 +13,7 @@
           :key="virtualColumn.index"
           class="absolute top-0 left-0"
           :style="{
-            width: `${columns[virtualColumn.index]}px`,
+            width: `160px`,
             height: `${rows[virtualRow.index].size}px`,
             transform: `translateX(${virtualColumn.start}px) translateY(${virtualRow.start}px)`,
           }">
@@ -62,8 +62,4 @@ const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
 const totalSizeRows = computed(() => rowVirtualizer.value.getTotalSize())
 const virtualColumns = computed(() => columnVirtualizer.value.getVirtualItems())
 const totalSizeColumns = computed(() => columnVirtualizer.value.getTotalSize())
-
-function onLog() {
-  console.log(rowVirtualizer.value, columnVirtualizer.value, totalSizeColumns.value, totalSizeRows.value)
-}
 </script>

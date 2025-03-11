@@ -6,10 +6,15 @@
       ref="jo"
       :rows="lanes"
       class="w-60"
-      @scroll="e => onScroll(yo, e)">
+      @scroll="e => onScroll(true, e)">
 
-      <ResourceGroup v-if="resource.isGroup" :resource="resource"/>
-      <Resource v-else :resource="resource"/>
+      <slot v-if="resource.isGroup" name="resourceGroup" v-bind="{ resource }">
+        <ResourceGroup :resource="resource"/>
+      </slot>
+
+      <slot v-else name="resource" v-bind="{ resource }">
+        <Resource :resource="resource"/>
+      </slot>
 
     </VirtualRow>
 
@@ -19,15 +24,17 @@
       :rows="lanes"
       :columns="dates"
       class="flex-1"
-      @scroll="e => onScroll(jo, e)">
+      @scroll="e => onScroll(false, e)">
 
-      <template v-if="!resource.isGroup">
-        <template v-for="event in resource.events" :key="event.id">
-          <slot v-if="toISODate(event.start) === date" name="event" v-bind="{ resource, event, date }">
-            {{ event.id }}
-          </slot>
-        </template>
-      </template>
+      <div v-if="!resource.isGroup" class="h-full p-1 flex">
+        <div class="min-w-0 flex flex-1 rounded-xl empty:bg-slate-50 empty:hover:bg-sky-50" @click.self="onDateClick({ resource, date })">
+          <template v-for="event in resource.events" :key="event.id">
+            <slot v-if="toISODate(event.start) === date" name="event" v-bind="{ resource, event, date }">
+              <Event :event="event"/>
+            </slot>
+          </template>
+        </div>
+      </div>
 
     </VirtualGrid>
 
@@ -45,7 +52,7 @@ import VirtualGrid from './components/VirtualGrid'
 import VirtualRow from './components/VirtualRow'
 import ResourceGroup from './components/ResourceGroup'
 import Resource from './components/Resource'
-// import Event from './components/Event'
+import Event from './components/Event'
 
 const props = defineProps({
   resources: {
@@ -70,12 +77,12 @@ const dates = computed(() => buildDates(options.value))
 const lanes = computed(() => buildLanes(props.resources, props.events))
 
 function onScroll(reffy, e) {
-  console.log(reffy)
-  // console.log(reffy.value)
-  // reffy.value.$el.scrollTop = e.target.scrollTop // TODO: Sync the two
+  const t = reffy ? yo.value : jo.value
+
+  t.$el.scrollTop = e.target.scrollTop
 }
-function onClick(resource, date) {
-  console.log(resource, date)
+function onDateClick(payload) {
+  props.config?.onDateClick?.(payload)
 }
 
 defineOptions({ name: 'Cullendar' })

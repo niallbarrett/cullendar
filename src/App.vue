@@ -20,12 +20,14 @@ const resources = ref([])
 const events = ref([])
 const config = reactive({
   nWeeks,
+  onDateClick: addEvent,
   onView: (e) => buildDemo(e.dates)
 })
 
 function buildDemo(dates) {
-  const r = Array.from({ length: 100 }).map((v, i) => toResourceGroup(i))
-  const e = r.flatMap((r, i) => dates.map(d => toEvent(i, r.id + '-1', d)))
+  const r = Array.from({ length: 10 }).map((v, i) => toResourceGroup(i))
+  const c = r.flatMap(r => r.resources)
+  const e = c.flatMap((r, i) => dates.slice(1).map(d => toEvent(i, r.id, d)))
 
   resources.value = r
   events.value = e
@@ -53,13 +55,13 @@ function toEvent(id, resourceId, date) {
     resourceId
   }
 }
-// function addEvent({ resource, date }) {
-//   const ev = toEvent(events.value.length, resource.id, date)
-//   ev.start = ev.start.split(' ')[0] + ' 09:15'
-//   ev.end = ev.end.split(' ')[0] + ' 14:15'
+function addEvent({ resource, date }) {
+  const ev = toEvent(events.value.length, resource.id, date)
+  ev.start = ev.start.split(' ')[0] + ' 09:15'
+  ev.end = ev.end.split(' ')[0] + ' 14:15'
 
-//   events.value.push(ev)
-// }
+  events.value.push(ev)
+}
 // function viewEvent({ event }) {
 //   alert(JSON.stringify(event))
 // }

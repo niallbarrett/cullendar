@@ -31,8 +31,6 @@ function buildEventMap(events) {
     })
   })
 
-  console.log(mappy)
-
   return mappy
 }
 
@@ -44,8 +42,6 @@ function buildDates(options) {
   }
 
   const dates = eachDayOfInterval(interval).map(toISODate)
-
-  console.log(options)
 
   options?.onView?.({ nWeeks: options.nWeeks, dates })
 
