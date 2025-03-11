@@ -4,16 +4,25 @@
       class="cullendar-timeline-wrapper"
       :style="{ height: `${totalSizeRows}px`, width: `${totalSizeColumns}px` }">
 
+      <div class="cullendar-timeline-head">
+        <div
+          v-for="col in virtualColumns"
+          :key="col.index"
+          class="cullendar-timeline-virtual-col"
+          :style="toHeadStyle(col)">
+          <slot name="dayHead" v-bind="{ date: columns[col.index] }"/>
+        </div>
+      </div>
+
       <template v-for="row in virtualRows" :key="row.index">
         <div
           v-for="col in virtualColumns"
           :key="col.index"
           class="cullendar-timeline-virtual-col"
-          :style="toStyle(row, col)">
-          <slot v-bind="{ resource: rows[row.index], date: columns[col.index] }"/>
+          :style="toColStyle(row, col)">
+          <slot name="day" v-bind="{ resource: rows[row.index], date: columns[col.index] }"/>
         </div>
       </template>
-
     </div>
   </div>
 </template>
@@ -39,7 +48,8 @@ const rowOptions = computed(() => ({
   count: props.rows.length,
   getScrollElement: () => el.value,
   estimateSize: (i) => props.rows[i].size,
-  overscan: 0
+  overscan: 0,
+  paddingStart: 32
 }))
 const colOptions = computed(() => ({
   horizontal: true,
@@ -57,7 +67,15 @@ const totalSizeRows = computed(() => rowVirtualizer.value.getTotalSize())
 const virtualColumns = computed(() => columnVirtualizer.value.getVirtualItems())
 const totalSizeColumns = computed(() => columnVirtualizer.value.getTotalSize())
 
-function toStyle(row, col) {
+function toHeadStyle(col) {
+  return {
+    height: '32px',
+    width: '160px',
+    transform: `translateX(${col.start}px) translateY(0)`,
+    background: '#fff'
+  }
+}
+function toColStyle(row, col) {
   return {
     width: '160px', // TODO: Variable width when smaller
     height: `${props.rows[row.index].size}px`,
@@ -73,6 +91,11 @@ function toStyle(row, col) {
   }
   .cullendar-timeline-wrapper {
     position: relative;
+  }
+  .cullendar-timeline-head {
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
   .cullendar-timeline-virtual-col {
     position: absolute;

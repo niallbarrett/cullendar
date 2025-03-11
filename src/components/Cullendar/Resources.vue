@@ -5,8 +5,8 @@
         v-for="row in virtualRows"
         :key="row.index"
         class="cullendar-resources-virtual-row"
-        :style="{ height: `${row.size}px`, transform: `translateY(${row.start}px)` }">
-        <slot v-if="!rows[row.index].isDate" v-bind="{ resource: rows[row.index] }"/>
+        :style="toStyle(row)">
+        <slot v-bind="{ resource: rows[row.index] }"/>
       </div>
     </div>
   </div>
@@ -29,13 +29,21 @@ const options = computed(() => ({
   count: props.rows.length,
   getScrollElement: () => el.value,
   estimateSize: i => props.rows[i].size,
-  overscan: 1
+  overscan: 1,
+  paddingStart: 32
 }))
 
 const rowVirtualizer = useVirtualizer(options)
 
 const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
 const totalSize = computed(() => rowVirtualizer.value.getTotalSize())
+
+function toStyle(row) {
+  return {
+    height: `${row.size}px`,
+    transform: `translateY(${row.start}px)`
+  }
+}
 </script>
 
 <style scoped>

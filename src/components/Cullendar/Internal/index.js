@@ -16,8 +16,8 @@ function buildLanes(resources, events) {
   const eventMap = buildEventMap(events)
   const r = buildResources(resources)
 
-  // TODO: Lane API isDate, isGroup and { data: resource, size: 15 }
-  return [{ isDate: true, size: 32 }, ...r.map(resource => ({ ...resource, events: eventMap.get(resource.id) }))]
+  // TODO: Row API isDate, isGroup and { data: resource, size: 15 }
+  return r.map(resource => ({ ...resource, events: eventMap.get(resource.id) }))
 }
 
 function buildEventMap(events) {

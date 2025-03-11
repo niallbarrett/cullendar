@@ -6,9 +6,9 @@
       :events="events"
       :config="config"
       class="bg-white border border-black rounded-xl text-sm">
-      <template #dayHead="{ date, label }">
+      <template #dayHead="{ date }">
         <div class="h-full px-2 flex items-center text-slate-500">
-          <span class="truncate">{{ label }}</span>
+          <span class="truncate">{{ date }}</span>
         </div>
       </template>
       <template #resourceGroup="{ resource }">
@@ -36,7 +36,7 @@ import { ref, reactive } from 'vue'
 import Cullendar from '@/components/Cullendar'
 import Event from './components/Event'
 
-const nWeeks = ref(4)
+const nWeeks = ref(1)
 const resources = ref([])
 const events = ref([])
 const config = reactive({
@@ -47,11 +47,11 @@ const config = reactive({
 
 function buildDemo(dates) {
   const r = Array.from({ length: 10 }).map((v, i) => toResourceGroup(i))
-  // const c = r.flatMap(r => r.resources)
-  // const e = c.flatMap((r, i) => dates.slice(1).map(d => toEvent(i, r.id, d)))
+  const c = r.flatMap(r => r.resources)
+  const e = c.flatMap((r, i) => dates.slice(1).map(d => toEvent(i, r.id, d)))
 
   resources.value = r
-  events.value = []
+  events.value = e
 }
 
 function toResourceGroup(id) {

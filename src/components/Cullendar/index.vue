@@ -10,26 +10,34 @@
     </Resources>
 
     <Timeline
-      v-slot="{ resource, date }"
       ref="timelineRef"
       :rows="lanes"
       :columns="dates"
       @scroll="syncScroll('timeline', $event)">
 
-      <div
-        v-if="!resource.isGroup"
-        class="cullendar-resources-day"
-        @click.self="onDateClick({ resource, date })">
-        <!-- TODO: Day slot? -->
-        <template v-for="event in resource.events" :key="event.id">
-          <slot
-            v-if="toISODate(event.start) === date"
-            name="event"
-            v-bind="{ resource, event, date }"/>
-        </template>
-      </div>
+      <template #dayHead="{ date }">
+        <slot name="dayHead" v-bind="{ date }"/>
+      </template>
+
+      <template #day="{ resource, date }">
+        <slot v-if="!resource.isGroup" name="day" v-bind="{ resource, date }">
+
+          <div
+            class="cullendar-resources-day"
+            @click.self="onDateClick({ resource, date })">
+            <template v-for="event in resource.events" :key="event.id">
+              <slot
+                v-if="toISODate(event.start) === date"
+                name="event"
+                v-bind="{ resource, event, date }"/>
+            </template>
+          </div>
+
+        </slot>
+      </template>
 
     </Timeline>
+    <slot/>
   </div>
 </template>
 
@@ -55,10 +63,6 @@ const props = defineProps({
   config: {
     type: Object,
     default: () => ({})
-  },
-  loading: {
-    type: Boolean, // TODO: Loading state
-    default: false
   }
 })
 
