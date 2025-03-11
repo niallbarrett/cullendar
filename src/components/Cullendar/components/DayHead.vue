@@ -1,8 +1,6 @@
 <template>
-  <div class="p-1 bg-white text-slate-500">
-    <div class="px-2 py-1 border border-slate-100 rounded-xl truncate">
-      {{ label }}
-    </div>
+  <div class="p-2 flex bg-white text-slate-500">
+    <span class="truncate">{{ label }}</span>
   </div>
 </template>
 

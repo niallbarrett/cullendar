@@ -1,8 +1,6 @@
 <template>
   <div class="h-screen p-12">
-    <span>{{ startDate }}</span>
-    <span>{{ endDate }}</span>
-    <button @click="test">Test</button>
+    <input v-model="nWeeks" type="number" min="1"/>
     <Cullendar
       :resources="resources"
       :events="events"
@@ -19,10 +17,11 @@ import useCullendar from '@/components/Cullendar/composables/Cullendar'
 // Components
 import Cullendar from '@/components/Cullendar'
 
+const nWeeks = ref(1)
 const resources = ref([])
 const events = ref([])
 const config = reactive({
-  nWeeks: 1,
+  nWeeks,
   onDateClick: addEvent,
   onEventClick: viewEvent,
   onView: (e) => buildDemo(e.dates)
@@ -31,7 +30,7 @@ const config = reactive({
 const { startDate, endDate } = useCullendar()
 
 function buildDemo(dates) {
-  const r = Array.from({ length: 10 }).map((v, i) => toResourceGroup(i))
+  const r = Array.from({ length: 1 }).map((v, i) => toResourceGroup(i))
   const e = r.flatMap((r, i) => dates.slice(1).map(d => toEvent(i, r.id + '-1', d)))
 
   resources.value = r
@@ -69,12 +68,5 @@ function addEvent({ resource, date }) {
 }
 function viewEvent({ event }) {
   alert(JSON.stringify(event))
-}
-function test() {
-  config.nWeeks = 4
-  // const ev = events.value[0]
-  // const st = ev.start.split(' ')
-
-  // ev.start = st[0] + ' 10:15'
 }
 </script>

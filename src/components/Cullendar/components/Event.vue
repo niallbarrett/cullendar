@@ -1,6 +1,7 @@
 <template>
-  <div class="ev p-1 flex-1 bg-white border border-slate-200 rounded-xl leading-none select-none hover:border-blue-500">
+  <div class="ev min-w-0 p-1 flex flex-col flex-1 bg-white border border-slate-200 rounded-xl leading-none select-none hover:border-blue-500">
     <span class="text-xs">{{ label }}</span>
+    <span class="truncate">A really long event title goes here hello</span>
   </div>
 </template>
 

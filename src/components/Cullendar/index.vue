@@ -13,7 +13,7 @@
           v-bind="{ date }">
           <DayHead
             :date="date"
-            class="min-w-40 flex-1"/>
+            class="w-40 flex-1"/>
         </slot>
 
       </div>
@@ -35,12 +35,12 @@
 
           <!-- TODO: Implement the visible math logic bitz -->
           <!-- TODO: visible dates! -->
-          <div v-if="!resource.isGroup" class="flex flex-1">
+          <template v-if="!resource.isGroup">
 
-            <div v-for="date in dates" :key="date" class="h-full min-w-40 p-1 flex flex-1">
+            <div v-for="date in dates" :key="date" class="h-full w-40 p-1 flex flex-1">
 
               <div
-                class="flex gap-px flex-1 rounded-xl empty:bg-slate-50 empty:hover:bg-sky-50"
+                class="min-w-0 flex gap-px flex-1 rounded-xl empty:bg-slate-50 empty:hover:bg-sky-50"
                 @click.self="onDateClick({ resource, date })">
 
                 <template v-for="event in resource.events" :key="event.id">
@@ -55,7 +55,7 @@
 
             </div>
 
-          </div>
+          </template>
 
         </div>
 
