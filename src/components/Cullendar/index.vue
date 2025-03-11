@@ -2,37 +2,32 @@
   <div class="cullendar">
     <Resources
       v-slot="{ resource }"
-      ref="jo"
+      ref="resourcesRef"
       :rows="lanes"
-      @scroll="e => onScroll(true, e)">
-
-      <slot v-if="resource.isGroup" name="resourceGroup" v-bind="{ resource }">
-        <ResourceGroup :resource="resource"/>
-      </slot>
-
-      <slot v-else name="resource" v-bind="{ resource }">
-        <Resource :resource="resource"/>
-      </slot>
-
+      @scroll="syncScroll('resources', $event)">
+      <slot v-if="resource.isGroup" name="resourceGroup" v-bind="{ resource }"/>
+      <slot v-else name="resource" v-bind="{ resource }"/>
     </Resources>
 
     <Timeline
       v-slot="{ resource, date }"
-      ref="yo"
+      ref="timelineRef"
       :rows="lanes"
       :columns="dates"
-      @scroll="e => onScroll(false, e)">
+      @scroll="syncScroll('timeline', $event)">
 
-      <DayHead v-if="resource.isDate" :date="date"/>
-
-      <Day
-        v-else-if="!resource.isGroup"
-        v-slot="{ event }"
-        :resource="resource"
-        :date="date"
-        @date="onDateClick">
-        <slot name="event" v-bind="{ resource, event, date }"/>
-      </Day>
+      <div
+        v-if="!resource.isGroup"
+        class="cullendar-resources-day"
+        @click.self="onDateClick({ resource, date })">
+        <!-- TODO: Day slot? -->
+        <template v-for="event in resource.events" :key="event.id">
+          <slot
+            v-if="toISODate(event.start) === date"
+            name="event"
+            v-bind="{ resource, event, date }"/>
+        </template>
+      </div>
 
     </Timeline>
   </div>
@@ -42,13 +37,11 @@
 // Libraries
 import { ref, computed, defineOptions } from 'vue'
 import { DEFAULT_CONFIG, buildLanes, buildDates } from './Internal'
+// Utils
+import toISODate from '@/components/Cullendar/utils/ToISODate'
 // Components
 import Timeline from './Timeline'
 import Resources from './Resources'
-import DayHead from './components/DayHead'
-import Day from './components/Day'
-import ResourceGroup from './components/ResourceGroup'
-import Resource from './components/Resource'
 
 const props = defineProps({
   resources: {
@@ -69,17 +62,17 @@ const props = defineProps({
   }
 })
 
-const jo = ref()
-const yo = ref()
+const resourcesRef = ref()
+const timelineRef = ref()
 
 const options = computed(() => ({ ...DEFAULT_CONFIG, ...props.config }))
 const dates = computed(() => buildDates(options.value))
 const lanes = computed(() => buildLanes(props.resources, props.events))
 
-function onScroll(reffy, e) {
-  const t = reffy ? yo.value : jo.value
+function syncScroll(source, e) {
+  const target = source === 'resources' ? timelineRef : resourcesRef
 
-  t.$el.scrollTop = e.target.scrollTop
+  target.value.$el.scrollTop = e.target.scrollTop
 }
 function onDateClick(payload) {
   props.config?.onDateClick?.(payload)
@@ -93,5 +86,9 @@ defineOptions({ name: 'Cullendar' })
     height: 100%;
     display: flex;
     overflow: hidden;
+  }
+  .cullendar-resources-day {
+    height: 100%;
+    display: flex;
   }
 </style>

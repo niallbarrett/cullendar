@@ -8,7 +8,7 @@
 // Libraries
 import { computed } from 'vue'
 // Utils
-import formatTime from '../utils/FormatTime'
+import formatTime from '@/components/Cullendar/utils/FormatTime'
 
 const props = defineProps({
   event: {

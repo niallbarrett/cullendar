@@ -3,15 +3,17 @@
     <div
       class="cullendar-timeline-wrapper"
       :style="{ height: `${totalSizeRows}px`, width: `${totalSizeColumns}px` }">
-      <template v-for="virtualRow in virtualRows" :key="virtualRow.index">
+
+      <template v-for="row in virtualRows" :key="row.index">
         <div
-          v-for="virtualColumn in virtualColumns"
-          :key="virtualColumn.index"
+          v-for="col in virtualColumns"
+          :key="col.index"
           class="cullendar-timeline-virtual-col"
-          :style="{ width: `160px`, height: `${rows[virtualRow.index].size}px`, transform: `translateX(${virtualColumn.start}px) translateY(${virtualRow.start}px)` }">
-          <slot v-bind="{ resource: rows[virtualRow.index], date: columns[virtualColumn.index] }"/>
+          :style="toStyle(row, col)">
+          <slot v-bind="{ resource: rows[row.index], date: columns[col.index] }"/>
         </div>
       </template>
+
     </div>
   </div>
 </template>
@@ -54,6 +56,14 @@ const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
 const totalSizeRows = computed(() => rowVirtualizer.value.getTotalSize())
 const virtualColumns = computed(() => columnVirtualizer.value.getVirtualItems())
 const totalSizeColumns = computed(() => columnVirtualizer.value.getTotalSize())
+
+function toStyle(row, col) {
+  return {
+    width: '160px', // TODO: Variable width when smaller
+    height: `${props.rows[row.index].size}px`,
+    transform: `translateX(${col.start}px) translateY(${row.start}px)`
+  }
+}
 </script>
 
 <style scoped>

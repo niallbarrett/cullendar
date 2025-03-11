@@ -2,11 +2,11 @@
   <div ref="el" class="cullendar-resources">
     <div class="cullendar-resources-wrapper" :style="{ height: `${totalSize}px` }">
       <div
-        v-for="virtualRow in virtualRows"
-        :key="virtualRow.index"
+        v-for="row in virtualRows"
+        :key="row.index"
         class="cullendar-resources-virtual-row"
-        :style="{ height: `${virtualRow.size}px`, transform: `translateY(${virtualRow.start}px)` }">
-        <slot v-if="!rows[virtualRow.index].isDate" v-bind="{ resource: rows[virtualRow.index] }"/>
+        :style="{ height: `${row.size}px`, transform: `translateY(${row.start}px)` }">
+        <slot v-if="!rows[row.index].isDate" v-bind="{ resource: rows[row.index] }"/>
       </div>
     </div>
   </div>

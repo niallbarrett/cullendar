@@ -6,6 +6,22 @@
       :events="events"
       :config="config"
       class="bg-white border border-black rounded-xl text-sm">
+      <template #dayHead="{ date, label }">
+        <div class="h-full px-2 flex items-center text-slate-500">
+          <span class="truncate">{{ label }}</span>
+        </div>
+      </template>
+      <template #resourceGroup="{ resource }">
+        <div class="h-full px-2 flex items-center text-xs text-slate-500">
+          <span class="truncate">{{ resource.label }}</span>
+        </div>
+      </template>
+      <template #resource="{ resource }">
+        <div class="h-full px-2 flex items-center gap-1">
+          <span class="size-6 rounded-full bg-slate-100"/>
+          <span class="truncate">{{ resource.label }}</span>
+        </div>
+      </template>
       <template #event="{ event }">
         <Event :event="event"/>
       </template>
@@ -67,7 +83,4 @@ function addEvent({ resource, date }) {
 
   events.value.push(ev)
 }
-// function viewEvent({ event }) {
-//   alert(JSON.stringify(event))
-// }
 </script>
