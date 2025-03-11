@@ -1,6 +1,9 @@
 <template>
   <div class="h-screen p-12">
-    <input v-model="nWeeks" type="number" min="1"/>
+    <div class="flex">
+      <input v-model="date" type="date"/>
+      <input v-model="nWeeks" type="number" min="1"/>
+    </div>
     <Cullendar
       :resources="resources"
       :events="events"
@@ -36,19 +39,29 @@ import { ref, reactive } from 'vue'
 import Cullendar from '@/components/Cullendar'
 import Event from './components/Event'
 
+const NO_GROUPS = 5
+const NO_CHILDREN = 5
+
+const date = ref('2025-03-12')
 const nWeeks = ref(1)
+
 const resources = ref([])
 const events = ref([])
 const config = reactive({
+  date,
   nWeeks,
   onDateClick: addEvent,
-  onView: (e) => buildDemo(e.dates)
+  onView: (e) => console.log('view', e)
 })
 
-function buildDemo(dates) {
-  const r = Array.from({ length: 10 }).map((v, i) => toResourceGroup(i))
+buildDemo()
+
+function buildDemo() {
+  const dates = ['2025-03-10']
+
+  const r = Array.from({ length: NO_GROUPS }).map((v, i) => toResourceGroup(i))
   const c = r.flatMap(r => r.resources)
-  const e = c.flatMap((r, i) => dates.slice(1).map(d => toEvent(i, r.id, d)))
+  const e = c.flatMap((r, i) => dates.map(d => toEvent(i, r.id, d)))
 
   resources.value = r
   events.value = e
@@ -58,7 +71,7 @@ function toResourceGroup(id) {
   return {
     id: String(id),
     label: 'Group ' + (id + 1),
-    resources: Array.from({ length: 10 }).map((v, i) => toResource(id, i))
+    resources: Array.from({ length: NO_CHILDREN }).map((v, i) => toResource(id, i))
   }
 }
 function toResource(groupId, id) {
