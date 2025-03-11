@@ -1,6 +1,6 @@
 <template>
   <div ref="el" class="cullendar-resources">
-    <div class="cullendar-resources-wrapper" :style="{ height: `${totalSize}px` }">
+    <div class="cullendar-resources-wrapper" :style="wrapperStyle">
       <div
         v-for="row in virtualRows"
         :key="row.index"
@@ -13,8 +13,11 @@
 </template>
 
 <script setup>
+// Libraries
 import { ref, computed } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
+// Utils
+import toPx from '@/components/Cullendar/utils/toPx'
 
 const props = defineProps({
   rows: {
@@ -37,11 +40,12 @@ const rowVirtualizer = useVirtualizer(options)
 
 const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
 const totalSize = computed(() => rowVirtualizer.value.getTotalSize())
+const wrapperStyle = computed(() => ({ height: toPx(totalSize.value) }))
 
 function toStyle(row) {
   return {
-    height: `${row.size}px`,
-    transform: `translateY(${row.start}px)`
+    height: toPx(row.size),
+    transform: `translateY(${toPx(row.start)})`
   }
 }
 </script>

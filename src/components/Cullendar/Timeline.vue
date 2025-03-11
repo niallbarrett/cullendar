@@ -2,7 +2,7 @@
   <div ref="el" class="cullendar-timeline">
     <div
       class="cullendar-timeline-wrapper"
-      :style="{ height: `${totalSizeRows}px`, width: `${totalSizeColumns}px` }">
+      :style="wrapperStyle">
 
       <div class="cullendar-timeline-head">
         <div
@@ -28,8 +28,11 @@
 </template>
 
 <script setup>
+// Libraries
 import { ref, computed } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
+// Utils
+import toPx from '@/components/Cullendar/utils/toPx'
 
 const props = defineProps({
   rows: {
@@ -66,20 +69,24 @@ const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
 const totalSizeRows = computed(() => rowVirtualizer.value.getTotalSize())
 const virtualColumns = computed(() => columnVirtualizer.value.getVirtualItems())
 const totalSizeColumns = computed(() => columnVirtualizer.value.getTotalSize())
+const wrapperStyle = computed(() => ({
+  height: toPx(totalSizeRows.value),
+  width: toPx(totalSizeColumns.value)
+}))
 
 function toHeadStyle(col) {
   return {
-    height: '32px',
-    width: '160px',
-    transform: `translateX(${col.start}px) translateY(0)`,
+    height: toPx(32),
+    width: toPx(160),
+    transform: `translateX(${toPx(col.start)}) translateY(0)`,
     background: '#fff'
   }
 }
 function toColStyle(row, col) {
   return {
-    width: '160px', // TODO: Variable width when smaller
-    height: `${props.rows[row.index].size}px`,
-    transform: `translateX(${col.start}px) translateY(${row.start}px)`
+    width: toPx(160), // TODO: Variable width when smaller
+    height: toPx(props.rows[row.index].size),
+    transform: `translateX(${toPx(col.start)}) translateY(${toPx(row.start)})`
   }
 }
 </script>
