@@ -1,11 +1,9 @@
 // Libraries
 import { addWeeks, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns'
-// Composables
-import useCullendar from './composables/Cullendar'
+// Internal
+import { build as buildResources } from './Resources'
 // Utils
-import toISODate from "./utils/toISODate"
-
-const { dates, startDate, endDate } = useCullendar()
+import toISODate from "../utils/ToISODate"
 
 const DEFAULT_CONFIG = {
   date: toISODate(new Date()),
@@ -21,16 +19,6 @@ function buildLanes(resources, events) {
   return r.map(resource => ({ ...resource, events: eventMap.get(resource.id) }))
 }
 
-function buildResources(resources) {
-  return resources.flatMap(resource => {
-    if (!resource.resources)
-      return [resource]
-
-    resource.isGroup = true
-    return [resource, ...resource.resources]
-  })
-}
-
 function buildEventMap(events) {
   const mappy = new Map()
 
@@ -43,6 +31,8 @@ function buildEventMap(events) {
     })
   })
 
+  console.log(mappy)
+
   return mappy
 }
 
@@ -53,13 +43,13 @@ function buildDates(options) {
     end: endOfWeek(addWeeks(start, options.nWeeks - 1), { weekStartsOn: options.firstDayOfWeek })
   }
 
-  dates.value = eachDayOfInterval(interval).map(toISODate)
-  startDate.value = dates.value.at(0)
-  endDate.value = dates.value.at(-1)
+  const dates = eachDayOfInterval(interval).map(toISODate)
 
-  options?.onView?.({ nWeeks: options.nWeeks, start: startDate.value, end: endDate.value, dates: dates.value })
+  console.log(options)
 
-  return dates.value
+  options?.onView?.({ nWeeks: options.nWeeks, dates })
+
+  return dates
 }
 
 export {
