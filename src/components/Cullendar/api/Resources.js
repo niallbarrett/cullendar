@@ -1,14 +1,19 @@
-function build(arr) {
-  const resources = arr.flatMap(val => !val.resources ? [toResource(val)] : [toResource(val), ...(val.isCollapsed ? [] : val.resources.map(r => toResource(r)))])
+import toArray from '../utils/ToArray'
 
-  return resources.sort((a, b) => b.nOrder - a.nOrder) // TODO: Group nOrder and child nOrder
+function build(resources, eventMap) {
+  console.log('build resources', resources, eventMap)
+
+  // TODO: Row API isGroup, isExpanded and { data: resource, size: 15 }
+  // TODO: collapsing and nOrdering
+  return resources.flatMap(r => [r, ...toArray(r.resources)].map(r => toResource(r, eventMap.get(r.id))))
 }
 
-function toResource(val) {
+function toResource(val, events) {
   const isGroup = !!val.resources
 
   return {
     ...val,
+    events, // TODO: Better to decouple events?
     isGroup,
     size: isGroup ? 24 : 48
   }

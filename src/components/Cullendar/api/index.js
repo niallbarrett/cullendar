@@ -1,27 +1,23 @@
+// Libraries
+import { computed, unref } from 'vue'
+// API
+import { build as buildConfig } from "./Config"
+import { build as buildView } from './View'
+import { build as buildEvents } from './Events'
 import { build as buildResources } from './Resources'
 
-function buildLanes(resources, events) {
-  const eventMap = buildEventMap(events)
-  const r = buildResources(resources)
+function create(r, events, options) {
+  const config = computed(() => buildConfig(options))
+  const view = computed(() => buildView(config.value))
 
-  // TODO: Row API isGroup, isExpanded and { data: resource, size: 15 }
-  return r.map(resource => ({ ...resource, events: eventMap.get(resource.id) }))
+  const eventMap = computed(() => buildEvents(unref(events)))
+  const resources = computed(() => buildResources(unref(r), eventMap.value))
+
+  return {
+    config,
+    view,
+    resources
+  }
 }
 
-function buildEventMap(events) {
-  const mappy = new Map()
-
-  events.forEach(event => {
-    const resourceIds = Array.isArray(event.resourceId) ? event.resourceId : [event.resourceId]
-
-    resourceIds.forEach(id => {
-      const setty = mappy.get(id) || new Set()
-      mappy.set(id, setty.add(event))
-    })
-  })
-
-  return mappy
-}
-
-
-export { buildLanes }
+export { create }

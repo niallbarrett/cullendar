@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@date-fns/tz": "^1.2.0",
     "@tailwindcss/vite": "^4.0.11",
     "@tanstack/vue-virtual": "^3.13.2",
     "date-fns": "^4.1.0",

@@ -3,7 +3,7 @@
     <Resources
       v-slot="{ resource }"
       ref="resourcesRef"
-      :rows="lanes"
+      :rows="resources"
       @scroll.passive="syncScroll('resources', $event)">
       <slot v-if="resource.isGroup" name="resourceGroup" v-bind="{ resource }"/>
       <slot v-else name="resource" v-bind="{ resource }"/>
@@ -11,7 +11,7 @@
 
     <Timeline
       ref="timelineRef"
-      :rows="lanes"
+      :rows="resources"
       :columns="dates"
       @scroll.passive="syncScroll('timeline', $event)">
 
@@ -44,36 +44,24 @@
 <script setup>
 // Libraries
 import { ref, computed, defineOptions } from 'vue'
-import { buildLanes } from './api'
-import { build as buildConfig } from './api/Config'
-import { build as buildDates } from './api/Dates'
 // Utils
-import toISODate from './utils/ToIsoDate'
+import toISODate from './utils/date/ToIsoDate'
 // Components
 import Timeline from './Timeline'
 import Resources from './Resources'
 
 const props = defineProps({
-  resources: {
-    type: Array,
-    required: true
-  },
-  events: {
-    type: Array,
-    default: () => []
-  },
-  config: {
+  cullendar: {
     type: Object,
-    default: () => ({})
+    required: true
   }
 })
 
 const resourcesRef = ref()
 const timelineRef = ref()
 
-const mergedConfig = computed(() => buildConfig(props.config))
-const dates = computed(() => buildDates(mergedConfig.value))
-const lanes = computed(() => buildLanes(props.resources, props.events))
+const dates = computed(() => props.cullendar.view.value.dates)
+const resources = computed(() => props.cullendar.resources.value)
 
 function syncScroll(source, e) {
   const target = source === 'resources' ? timelineRef : resourcesRef
@@ -81,7 +69,8 @@ function syncScroll(source, e) {
   target.value.$el.scrollTop = e.target.scrollTop
 }
 function onDateClick(payload) {
-  props.config?.onDateClick?.(payload)
+  console.log(payload) // TODO: Hook up to API
+  // props.cullendar?.onDateClick?.(payload)
 }
 
 defineOptions({ name: 'Cullendar' })

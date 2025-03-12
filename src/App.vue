@@ -3,12 +3,13 @@
     <div class="flex">
       <input v-model="date" type="date"/>
       <input v-model="nWeeks" type="number" min="1"/>
-      <input v-model="firstDayOfWeek" type="number" min="1"/>
+      <input v-model="firstDayOfWeek" type="number" min="0"/>
+      <select v-model="timezone">
+        <option v-for="zone in ZONES" :key="zone" :value="zone">{{ zone }}</option>
+      </select>
     </div>
     <Cullendar
-      :resources="resources"
-      :events="events"
-      :config="config"
+      :cullendar="cullendar"
       class="bg-white border border-black rounded-xl text-sm">
       <template #dayHead="{ date }">
         <div class="h-full px-2 flex items-center text-slate-500">
@@ -16,12 +17,12 @@
         </div>
       </template>
       <template #resourceGroup="{ resource }">
-        <div class="h-full px-2 flex items-center text-slate-500" @click="onTest(resource)">
+        <div class="h-full px-2 flex items-center text-slate-500">
           <span class="truncate">{{ resource.label }}</span>
         </div>
       </template>
       <template #resource="{ resource }">
-        <div class="h-full px-2 flex items-center gap-1">
+        <div class="h-full px-2 flex items-center gap-1" @click="onTest(resource)">
           <span class="size-6 rounded-full bg-slate-100"/>
           <span class="truncate">{{ resource.label }}</span>
         </div>
@@ -36,29 +37,38 @@
 <script setup>
 // Libraries
 import { ref, reactive } from 'vue'
+import { create } from '@/components/Cullendar/api'
 // Components
 import Cullendar from '@/components/Cullendar'
 import Event from './components/Event'
 
-const NO_GROUPS = 5
-const NO_CHILDREN = 5
+const ZONES = ['Asia/Shanghai', 'Europe/Dublin', 'America/New_York']
 
 const date = ref('2025-03-12')
 const nWeeks = ref(1)
 const firstDayOfWeek = ref(1)
+const timezone = ref('Asia/Shanghai')
 
-const resources = ref([])
-const events = ref([])
-const config = reactive({
+const resources = ref([{ id: '1', label: 'Hello' }])
+const events = ref([{ id: '2', resourceId: '1', start: '2025-03-12 09:00', end: '2025-03-12 10:00' }])
+const options = reactive({
   date,
+  timezone,
   nWeeks,
   firstDayOfWeek,
-  onDateClick: addEvent,
   onView: (e) => console.log('view', e)
 })
 
-buildDemo()
+const cullendar = create(resources, events, options)
+console.log(cullendar)
 
+function onTest(res) {
+  const r = resources.value.find(v => v.id === res.id)
+  r.label = 'Updated'
+}
+</script>
+
+<!-- <script setup>
 function buildDemo() {
   const dates = ['2025-03-10']
 
@@ -105,4 +115,4 @@ function onTest(res) {
 
   r.isCollapsed = !r.isCollapsed
 }
-</script>
+</script> -->

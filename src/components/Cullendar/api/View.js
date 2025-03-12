@@ -1,26 +1,27 @@
 // Libraries
 import { addWeeks, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns'
 // Utils
-import toISODate from '../utils/ToIsoDate'
+import toISODate from '../utils/date/ToIsoDate'
 
 function build(options) {
   const start = startOfWeek(options.date, { weekStartsOn: options.firstDayOfWeek })
   const end = endOfWeek(addWeeks(start, options.nWeeks - 1), { weekStartsOn: options.firstDayOfWeek })
-  const interval = {
+  const dates = eachDayOfInterval({
     start,
     end
+  }).map(toISODate)
+
+  const view = {
+    start: dates.at(0),
+    end: dates.at(-1),
+    dates,
+    nWeeks: options.nWeeks,
+    firstDayOfWeek: options.firstDayOfWeek
   }
 
-  const dates = eachDayOfInterval(interval).map(toISODate)
+  options?.onView?.(view)
 
-  options?.onView?.({
-    start: toISODate(start),
-    end: toISODate(end),
-    nWeeks: options.nWeeks,
-    dates
-  })
-
-  return dates
+  return view
 }
 
 export { build }
