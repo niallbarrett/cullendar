@@ -1,7 +1,7 @@
 import toISODate from "../utils/ToISODate"
 
 const DEFAULTS = {
-  timezone: 'Europe/Dublin',
+  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   nWeeks: 1,
   firstDayOfWeek: 1
 }
