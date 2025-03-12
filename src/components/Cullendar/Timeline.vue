@@ -32,7 +32,7 @@
 import { ref, computed } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 // Utils
-import toPx from '@/components/Cullendar/utils/toPx'
+import toPx from '@/components/Cullendar/utils/ToPx'
 
 const props = defineProps({
   rows: {

@@ -48,7 +48,7 @@ import { buildLanes } from './api'
 import { build as buildConfig } from './api/Config'
 import { build as buildDates } from './api/Dates'
 // Utils
-import toISODate from '@/components/Cullendar/utils/ToISODate'
+import toISODate from './utils/ToIsoDate'
 // Components
 import Timeline from './Timeline'
 import Resources from './Resources'

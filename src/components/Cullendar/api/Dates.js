@@ -1,7 +1,7 @@
 // Libraries
 import { addWeeks, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns'
 // Utils
-import toISODate from "../utils/ToISODate"
+import toISODate from '../utils/ToIsoDate'
 
 function build(options) {
   const start = startOfWeek(options.date, { weekStartsOn: options.firstDayOfWeek })

@@ -1,4 +1,4 @@
-import toISODate from "../utils/ToISODate"
+import toISODate from '../utils/ToIsoDate'
 
 const DEFAULTS = {
   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
