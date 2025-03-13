@@ -12,17 +12,13 @@ function build(options) {
   })
 
   console.log(d)
-  const dates = d.map(toISODate)
+  const dates = d.map(toISODate) // TODO: Timezone
 
-  const view = {
+  return {
     start: dates.at(0),
     end: dates.at(-1),
     dates
   }
-
-  options?.onView?.(view)
-
-  return view
 }
 
 export { build }
