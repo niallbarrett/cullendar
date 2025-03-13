@@ -10,7 +10,7 @@ const DEFAULTS = {
 
 function build(options) {
   return {
-    date: options.date || toISODate(new Date()),
+    date: options.date || toISODate(new Date()), // TODO: in timezone
     timezone: options.timezone || DEFAULTS.timezone,
     nWeeks: Math.max(options.nWeeks || DEFAULTS.nWeeks, 1),
     firstDayOfWeek: options.firstDayOfWeek ?? DEFAULTS.firstDayOfWeek,

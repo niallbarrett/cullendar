@@ -6,17 +6,18 @@ import toISODate from '../utils/date/ToIsoDate'
 function build(options) {
   const start = startOfWeek(options.date, { weekStartsOn: options.firstDayOfWeek })
   const end = endOfWeek(addWeeks(start, options.nWeeks - 1), { weekStartsOn: options.firstDayOfWeek })
-  const dates = eachDayOfInterval({
+  const d = eachDayOfInterval({
     start,
     end
-  }).map(toISODate)
+  })
+
+  console.log(d)
+  const dates = d.map(toISODate)
 
   const view = {
     start: dates.at(0),
     end: dates.at(-1),
-    dates,
-    nWeeks: options.nWeeks,
-    firstDayOfWeek: options.firstDayOfWeek
+    dates
   }
 
   options?.onView?.(view)

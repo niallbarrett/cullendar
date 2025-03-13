@@ -27,7 +27,7 @@
             @click.self="onDateClick({ resource, date })">
             <template v-for="event in resource.events" :key="event.id">
               <slot
-                v-if="toISODate(event.start) === date"
+                v-if="isOnDay(event.start, date)"
                 name="event"
                 v-bind="{ resource, event, date }"/>
             </template>
@@ -45,7 +45,7 @@
 // Libraries
 import { ref, computed, defineOptions } from 'vue'
 // Utils
-import toISODate from './utils/date/ToIsoDate'
+import toTimezoneDate from './utils/date/ToTimezoneDate'
 // Components
 import Timeline from './Timeline'
 import Resources from './Resources'
@@ -60,6 +60,7 @@ const props = defineProps({
 const resourcesRef = ref()
 const timelineRef = ref()
 
+const config = computed(() => props.cullendar.config.value)
 const dates = computed(() => props.cullendar.view.value.dates)
 const resources = computed(() => props.cullendar.resources.value)
 
@@ -69,8 +70,11 @@ function syncScroll(source, e) {
   target.value.$el.scrollTop = e.target.scrollTop
 }
 function onDateClick(payload) {
-  console.log(payload) // TODO: Hook up to API
-  // props.cullendar?.onDateClick?.(payload)
+  console.log(payload.date, toTimezoneDate(payload.date, config.value.timezone).toISOString())
+  // console.log(payload) // TODO: Hook up to API
+}
+function isOnDay(start, date) {
+  return start.slice(0, 10) === date // TODO: Timezone and an actual check
 }
 
 defineOptions({ name: 'Cullendar' })
