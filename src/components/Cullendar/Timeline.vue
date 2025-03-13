@@ -3,7 +3,6 @@
     <div
       class="cullendar-timeline-wrapper"
       :style="wrapperStyle">
-
       <div class="cullendar-timeline-head">
         <div
           v-for="col in virtualColumns"
@@ -13,7 +12,6 @@
           <slot name="dayHead" v-bind="{ date: columns[col.index] }"/>
         </div>
       </div>
-
       <template v-for="row in virtualRows" :key="row.index">
         <div
           v-for="col in virtualColumns"
@@ -29,7 +27,7 @@
 
 <script setup>
 // Libraries
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 // Utils
 import toPx from '@/components/Cullendar/utils/ToPx'
@@ -42,6 +40,14 @@ const props = defineProps({
   columns: {
     type: Array,
     default: () => []
+  },
+  columnWidth: {
+    type: Number,
+    required: true
+  },
+  headHeight: {
+    type: Number,
+    required: true
   }
 })
 
@@ -52,13 +58,13 @@ const rowOptions = computed(() => ({
   getScrollElement: () => el.value,
   estimateSize: (i) => props.rows[i].size,
   overscan: 0,
-  paddingStart: 32
+  paddingStart: props.headHeight
 }))
 const colOptions = computed(() => ({
   horizontal: true,
   count: props.columns.length,
   getScrollElement: () => el.value,
-  estimateSize: () => 160, // TODO: Lane info
+  estimateSize: () => props.columnWidth,
   overscan: 0
 }))
 
@@ -74,17 +80,19 @@ const wrapperStyle = computed(() => ({
   width: toPx(totalSizeColumns.value)
 }))
 
+watch(() => props.columnWidth, () => columnVirtualizer.value.measure())
+
 function toHeadStyle(col) {
   return {
-    height: toPx(32),
-    width: toPx(160),
+    height: toPx(props.headHeight),
+    width: toPx(props.columnWidth),
     transform: `translateX(${toPx(col.start)}) translateY(0)`,
     background: '#fff'
   }
 }
 function toColStyle(row, col) {
   return {
-    width: toPx(160), // TODO: Variable width when smaller
+    width: toPx(props.columnWidth), // TODO: Variable width when smaller
     height: toPx(props.rows[row.index].size),
     transform: `translateX(${toPx(col.start)}) translateY(${toPx(row.start)})`
   }

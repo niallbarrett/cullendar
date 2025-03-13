@@ -23,6 +23,10 @@ const props = defineProps({
   rows: {
     type: Array,
     default: () => []
+  },
+  headHeight: {
+    type: Number,
+    required: true
   }
 })
 
@@ -33,7 +37,7 @@ const options = computed(() => ({
   getScrollElement: () => el.value,
   estimateSize: i => props.rows[i].size,
   overscan: 1,
-  paddingStart: 32
+  paddingStart: props.headHeight
 }))
 
 const rowVirtualizer = useVirtualizer(options)

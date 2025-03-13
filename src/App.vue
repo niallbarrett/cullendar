@@ -1,16 +1,18 @@
 <template>
-  <div class="h-screen p-12">
-    <div class="flex">
+  <div class="h-screen p-12 flex flex-col gap-1 ">
+    <div class="p-2 flex border border-black">
       <input v-model="date" type="date"/>
       <input v-model="nWeeks" type="number" min="1"/>
       <input v-model="firstDayOfWeek" type="number" min="0"/>
+      <input v-model="colWidth" type="number" min="0"/>
+      <input v-model="headHeight" type="number" min="0"/>
       <select v-model="timezone">
         <option v-for="zone in ZONES" :key="zone" :value="zone">{{ zone }}</option>
       </select>
     </div>
     <Cullendar
       :cullendar="cullendar"
-      class="bg-white border border-black rounded-xl text-sm">
+      class="flex-1 bg-white border border-black text-sm">
       <template #dayHead="{ date }">
         <div class="h-full px-2 flex items-center text-slate-500" @click="addResource(date)">
           <span class="truncate">{{ date }}</span>
@@ -27,8 +29,8 @@
           <span class="truncate">{{ resource.label }}</span>
         </div>
       </template>
-      <template #event="{ event }">
-        <Event :event="event" @click="updateEvent(event)"/>
+      <template #event="{ event, resource, date }">
+        <Event :event="event" @click="addEvent({ resource, date })"/>
       </template>
     </Cullendar>
   </div>
@@ -51,17 +53,26 @@ const nWeeks = ref(1)
 const firstDayOfWeek = ref(1)
 const timezone = ref(ZONES[0])
 
+const colWidth = ref(160)
+const headHeight = ref(40)
+
 const resources = ref([{ id: '0', label: 'Hello' }])
 const events = ref([{ id: '0', resourceId: '0', start: '2025-03-12T09:00:00.000Z', end: '2025-03-12T10:30:00.000Z' }])
 const options = reactive({
-  date,
-  timezone,
-  nWeeks,
-  firstDayOfWeek,
-  onView: (e) => console.log('view', e)
+  view: {
+    date,
+    timezone,
+    nWeeks,
+    firstDayOfWeek
+  },
+  layout: {
+    colWidth,
+    headHeight
+  },
+  callbacks: { onView: (e) => console.log('VIEW CHANGED', e) }
 })
 
 const cullendar = create(resources, events, options)
-const { addResource, updateResource, updateEvent } = useDemo(resources, events)
+const { addResource, updateResource, addEvent } = useDemo(resources, events)
 console.log(cullendar)
 </script>
