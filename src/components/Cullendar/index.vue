@@ -45,7 +45,7 @@
 
 <script setup>
 // Libraries
-import { ref, toRefs, defineOptions } from 'vue'
+import { ref, toRefs } from 'vue'
 // Components
 import Timeline from './Timeline'
 import Resources from './Resources'
