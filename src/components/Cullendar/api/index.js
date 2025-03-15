@@ -1,27 +1,30 @@
 // Libraries
-import { computed, unref, watch } from 'vue'
+import { computed, reactive, unref, watch } from 'vue'
 // API
-import { build as buildView } from './View'
-import { build as buildLayout } from './Layout'
-import { build as buildEvents } from './Events'
-import { build as buildResources } from './Resources'
+import buildView from './View'
+import buildLayout from './Layout'
+import buildEvents from './Events'
+import buildResources from './Resources'
 
-function create(r, events, options) {
+function create(options) {
   const view = computed(() => buildView(options.view))
   const layout = computed(() => buildLayout(options.layout))
 
-  const eventMap = computed(() => buildEvents(unref(events)))
-  const resources = computed(() => buildResources(unref(r), eventMap.value))
+  const events = computed(() => buildEvents(unref(options.events)))
+  const resources = computed(() => buildResources(unref(options.resources), events.value))
 
   watch(view, () => options?.callbacks?.onView?.(view.value))
 
   // util lads for times?
 
-  return {
+  const api = reactive({
     view,
     layout,
-    resources
-  }
+    resources,
+    events
+  })
+
+  return api
 }
 
 export { create }

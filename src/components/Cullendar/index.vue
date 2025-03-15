@@ -18,19 +18,25 @@
       :head-height="layout.headHeight"
       @scroll.passive="syncScroll('timeline', $event)">
 
-      <template #dayHead="{ date }">
+      <template #head="{ date }">
         <slot name="dayHead" v-bind="{ date }"/>
       </template>
 
-      <template #day="{ resource, date }">
-        <slot v-if="!resource.isGroup" name="day" v-bind="{ resource, date }">
-          <template v-for="event in resource.events" :key="event.id">
+      <template #default="{ resource, date }">
+        <Day
+          v-if="!resource.isGroup"
+          v-slot="{ events }"
+          :date="date"
+          :resource="resource"
+          :events="eventsMap">
+          <slot name="day" v-bind="{ resource, date, events }">
             <slot
-              v-if="isOnDay(event.start, date)"
+              v-for="event in events"
+              :key="event.id"
               name="event"
               v-bind="{ resource, event, date }"/>
-          </template>
-        </slot>
+          </slot>
+        </Day>
       </template>
 
     </Timeline>
@@ -41,11 +47,10 @@
 <script setup>
 // Libraries
 import { ref, toRefs, defineOptions } from 'vue'
-// Utils
-// import toTimezoneDate from './utils/date/ToTimezoneDate'
 // Components
 import Timeline from './Timeline'
 import Resources from './Resources'
+import Day from './Day'
 
 const props = defineProps({
   cullendar: {
@@ -57,15 +62,12 @@ const props = defineProps({
 const resourcesRef = ref()
 const timelineRef = ref()
 
-const { layout, view, resources } = toRefs(props.cullendar)
+const { layout, view, resources, events: eventsMap } = toRefs(props.cullendar)
 
 function syncScroll(source, e) {
   const target = source === 'resources' ? timelineRef : resourcesRef
 
   target.value.$el.scrollTop = e.target.scrollTop
-}
-function isOnDay(start, date) {
-  return start.slice(0, 10) === date // TODO: Timezone and an actual check
 }
 
 defineOptions({ name: 'Cullendar' })

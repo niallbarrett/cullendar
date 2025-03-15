@@ -1,8 +1,6 @@
 import toArray from '../utils/ToArray'
 
-function build(resources, eventMap) {
-  console.log('build resources', resources, eventMap)
-
+export default function build(resources, eventMap) {
   // TODO: Row API isGroup, isExpanded and { data: resource, size: 15 }
   // TODO: collapsing and nOrdering
   return resources.flatMap(r => [r, ...toArray(r.resources)].map(r => toResource(r, eventMap.get(r.id))))
@@ -10,14 +8,11 @@ function build(resources, eventMap) {
 
 function toResource(val, events = new Set()) {
   const isGroup = !!val.resources
-  const nEvents = events.size
 
   return {
     ...val,
-    events, // TODO: Better to decouple events?
+    // events, // TODO: Better to decouple events?
     isGroup,
-    size: isGroup ? 24 : nEvents * 48 // TODO: events within current period
+    size: isGroup ? 24 : Math.max(...Array.from(events.values()).map(v => v.size)) * 48
   }
 }
-
-export { build }

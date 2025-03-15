@@ -29,9 +29,14 @@
           <span class="truncate">{{ resource.label }}</span>
         </div>
       </template>
-      <template #event="{ event, resource, date }">
-        <Event :event="event" @click="addEvent({ resource, date })"/>
+      <template #day="{ resource, events }">
+        <div>
+          <Event v-for="event in events" :key="event.id" :event="event" @click="addEvent({ resource, date })"/>
+        </div>
       </template>
+      <!-- <template #event="{ event, resource, date }">
+        <Event :event="event" @click="addEvent({ resource, date })"/>
+      </template> -->
     </Cullendar>
   </div>
 </template>
@@ -57,8 +62,14 @@ const colWidth = ref(160)
 const headHeight = ref(40)
 
 const resources = ref([{ id: '0', label: 'Hello' }])
-const events = ref([{ id: '0', resourceId: '0', start: '2025-03-12T09:00:00.000Z', end: '2025-03-12T10:30:00.000Z' }])
+const events = ref([
+  { id: '0', resourceId: '0', start: '2025-03-12T09:00:00.000Z', end: '2025-03-12T10:30:00.000Z' },
+  { id: '1', resourceId: '0', start: '2025-03-13T09:00:00.000Z', end: '2025-03-13T10:30:00.000Z' }
+])
+
 const options = reactive({
+  resources,
+  events,
   view: {
     date,
     timezone,
@@ -72,7 +83,6 @@ const options = reactive({
   callbacks: { onView: (e) => console.log('VIEW CHANGED', e) }
 })
 
-const cullendar = create(resources, events, options)
+const cullendar = create(options)
 const { addResource, updateResource, addEvent } = useDemo(resources, events)
-console.log(cullendar)
 </script>

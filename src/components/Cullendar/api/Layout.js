@@ -1,10 +1,8 @@
 import DEFAULTS from './Defaults'
 
-function build(options) {
+export default function build(options) {
   return {
     colWidth: options.colWidth ?? DEFAULTS.colWidth,
     headHeight: options.headHeight ?? DEFAULTS.headHeight
   }
 }
-
-export { build }

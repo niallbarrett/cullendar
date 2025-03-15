@@ -9,7 +9,7 @@
           :key="col.index"
           class="cullendar-timeline-virtual-col"
           :style="toHeadStyle(col)">
-          <slot name="dayHead" v-bind="{ date: columns[col.index] }"/>
+          <slot name="head" v-bind="{ date: columns[col.index] }"/>
         </div>
       </div>
       <template v-for="row in virtualRows" :key="row.index">
@@ -18,7 +18,7 @@
           :key="col.index"
           class="cullendar-timeline-virtual-col"
           :style="toColStyle(row, col)">
-          <slot name="day" v-bind="{ resource: rows[row.index], date: columns[col.index] }"/>
+          <slot v-bind="{ resource: rows[row.index], date: columns[col.index] }"/>
         </div>
       </template>
     </div>
@@ -51,9 +51,9 @@ const props = defineProps({
   }
 })
 
-const el = ref(null)
+const el = ref()
 
-const rowOptions = computed(() => ({
+const rowOptions = computed(() => ({ // todo move to api layer
   count: props.rows.length,
   getScrollElement: () => el.value,
   estimateSize: (i) => props.rows[i].size,
@@ -93,7 +93,7 @@ function toHeadStyle(col) {
 function toColStyle(row, col) {
   return {
     width: toPx(props.columnWidth), // TODO: Variable width when smaller
-    height: toPx(props.rows[row.index].size),
+    height: toPx(row.size),
     transform: `translateX(${toPx(col.start)}) translateY(${toPx(row.start)})`
   }
 }
