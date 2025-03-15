@@ -14,7 +14,7 @@
       :cullendar="cullendar"
       class="flex-1 bg-white border border-black text-sm">
       <template #dayHead="{ date }">
-        <div class="h-full px-2 flex items-center text-slate-500" @click="addResource(date)">
+        <div class="h-full px-2 flex items-center text-slate-500" @click="onHead(date)">
           <span class="truncate">{{ date }}</span>
         </div>
       </template>
@@ -24,19 +24,19 @@
         </div>
       </template>
       <template #resource="{ resource }">
-        <div class="h-full px-2 flex items-center gap-1" @click="updateResource(resource)">
+        <div class="h-full px-2 flex items-center gap-1">
           <span class="size-6 rounded-full bg-slate-100"/>
           <span class="truncate">{{ resource.label }}</span>
         </div>
       </template>
-      <template #day="{ resource, events }">
-        <div>
-          <Event v-for="event in events" :key="event.id" :event="event" @click="addEvent({ resource, date })"/>
+      <template #day="{ events }">
+        <div class="h-full flex flex-col justify-start">
+          <Event
+            v-for="event in events"
+            :key="event.id"
+            :event="event"/>
         </div>
       </template>
-      <!-- <template #event="{ event, resource, date }">
-        <Event :event="event" @click="addEvent({ resource, date })"/>
-      </template> -->
     </Cullendar>
   </div>
 </template>
@@ -63,8 +63,8 @@ const headHeight = ref(40)
 
 const resources = ref([{ id: '0', label: 'Hello' }])
 const events = ref([
-  { id: '0', resourceId: '0', start: '2025-03-12T09:00:00.000Z', end: '2025-03-12T10:30:00.000Z' },
-  { id: '1', resourceId: '0', start: '2025-03-13T09:00:00.000Z', end: '2025-03-13T10:30:00.000Z' }
+  { id: '0', resourceId: '0', start: '2025-03-12T01:00:00.000Z', end: '2025-03-12T02:00:00.000Z' },
+  { id: '1', resourceId: '0', start: '2025-03-12T23:00:00.000Z', end: '2025-03-12T23:30:00.000Z' }
 ])
 
 const options = reactive({
@@ -83,6 +83,16 @@ const options = reactive({
   callbacks: { onView: (e) => console.log('VIEW CHANGED', e) }
 })
 
-const cullendar = create(options)
-const { addResource, updateResource, addEvent } = useDemo(resources, events)
+
+const { api: cullendar } = useDemo()
+cullendar.value = create(options)
+
+function onHead(date) {
+  events.value.push({
+    id: '1',
+    resourceId: '0',
+    start: date + 'T23:00:00.000Z',
+    end: date + 'T23:30:00.000Z'
+  })
+}
 </script>

@@ -4,7 +4,7 @@
       v-slot="{ resource }"
       ref="resourcesRef"
       :rows="resources"
-      :head-height="layout.headHeight"
+      :layout="layout"
       @scroll.passive="syncScroll('resources', $event)">
       <slot v-if="resource.isGroup" name="resourceGroup" v-bind="{ resource }"/>
       <slot v-else name="resource" v-bind="{ resource }"/>
@@ -14,8 +14,7 @@
       ref="timelineRef"
       :rows="resources"
       :columns="view.dates"
-      :column-width="layout.colWidth"
-      :head-height="layout.headHeight"
+      :layout="layout"
       @scroll.passive="syncScroll('timeline', $event)">
 
       <template #head="{ date }">

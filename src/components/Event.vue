@@ -1,14 +1,12 @@
 <template>
-  <div class="ev min-w-0 p-1 bg-white border border-black">
+  <div class="ev max-h-12 min-w-0 p-1 flex-1 bg-white border border-black">
     <span class="text-xs">{{ label }}</span>
   </div>
 </template>
 
 <script setup>
-// Libraries
 import { computed } from 'vue'
-// Utils
-import formatTime from '@/components/Cullendar/utils/FormatTime'
+import useDemo from '@/Demo'
 
 const props = defineProps({
   event: {
@@ -17,5 +15,13 @@ const props = defineProps({
   }
 })
 
+const { api } = useDemo()
+
+console.log(api.value)
+
 const label = computed(() => `${formatTime(new Date(props.event.start)) } ⇢ ${formatTime(new Date(props.event.end))}`)
+
+function formatTime() {
+  return '00:00'
+}
 </script>

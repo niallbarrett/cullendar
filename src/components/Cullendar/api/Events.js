@@ -1,8 +1,10 @@
+import toTimezoneDate from '../utils/date/ToTimezoneDate'
+import toISODate from '../utils/date/ToIsoDate'
 import toArray from '../utils/ToArray'
 
-export default function build(events) {
+export default function build(events, timezone) {
   return events.reduce((acc, event) => {
-    const date = event.start.slice(0, 10) // TODO: Timezone shite and an actual date check
+    const date = toISODate(toTimezoneDate(event.start, timezone))
     const resourceIds = toArray(event.resourceId)
 
     resourceIds.forEach(resourceId => {

@@ -27,7 +27,7 @@
 
 <script setup>
 // Libraries
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 // Utils
 import toPx from '@/components/Cullendar/utils/ToPx'
@@ -41,30 +41,27 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  columnWidth: {
-    type: Number,
-    required: true
-  },
-  headHeight: {
-    type: Number,
+  layout: {
+    type: Object,
     required: true
   }
 })
 
 const el = ref()
+const colSize = ref(props.layout.colWidth)
 
 const rowOptions = computed(() => ({ // todo move to api layer
   count: props.rows.length,
   getScrollElement: () => el.value,
   estimateSize: (i) => props.rows[i].size,
   overscan: 0,
-  paddingStart: props.headHeight
+  paddingStart: props.layout.headHeight
 }))
 const colOptions = computed(() => ({
   horizontal: true,
   count: props.columns.length,
   getScrollElement: () => el.value,
-  estimateSize: () => props.columnWidth,
+  estimateSize: () => colSize.value,
   overscan: 0
 }))
 
@@ -80,19 +77,26 @@ const wrapperStyle = computed(() => ({
   width: toPx(totalSizeColumns.value)
 }))
 
-watch(() => props.columnWidth, () => columnVirtualizer.value.measure())
+watch(() => props.layout.colWidth, () => setColSize())
+watch(() => props.rows, () => rowVirtualizer.value.measure())
 
+onMounted(() => setColSize())
+
+function setColSize() {
+  colSize.value = Math.max(props.layout.colWidth, Math.round(el.value?.clientWidth / props.columns.length))
+  columnVirtualizer.value.measure()
+}
 function toHeadStyle(col) {
   return {
-    height: toPx(props.headHeight),
-    width: toPx(props.columnWidth),
+    height: toPx(props.layout.headHeight),
+    width: toPx(colSize.value),
     transform: `translateX(${toPx(col.start)}) translateY(0)`,
     background: '#fff'
   }
 }
 function toColStyle(row, col) {
   return {
-    width: toPx(props.columnWidth), // TODO: Variable width when smaller
+    width: toPx(colSize.value),
     height: toPx(row.size),
     transform: `translateX(${toPx(col.start)}) translateY(${toPx(row.start)})`
   }

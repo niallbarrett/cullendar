@@ -10,12 +10,10 @@ function create(options) {
   const view = computed(() => buildView(options.view))
   const layout = computed(() => buildLayout(options.layout))
 
-  const events = computed(() => buildEvents(unref(options.events)))
+  const events = computed(() => buildEvents(unref(options.events), view.value.timezone))
   const resources = computed(() => buildResources(unref(options.resources), events.value))
 
   watch(view, () => options?.callbacks?.onView?.(view.value))
-
-  // util lads for times?
 
   const api = reactive({
     view,

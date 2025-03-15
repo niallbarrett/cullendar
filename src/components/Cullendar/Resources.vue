@@ -14,7 +14,7 @@
 
 <script setup>
 // Libraries
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 // Utils
 import toPx from '@/components/Cullendar/utils/ToPx'
@@ -24,8 +24,8 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  headHeight: {
-    type: Number,
+  layout: {
+    type: Object,
     required: true
   }
 })
@@ -36,8 +36,8 @@ const options = computed(() => ({
   count: props.rows.length,
   getScrollElement: () => el.value,
   estimateSize: i => props.rows[i].size,
-  overscan: 1,
-  paddingStart: props.headHeight
+  overscan: 0,
+  paddingStart: props.layout.headHeight
 }))
 
 const rowVirtualizer = useVirtualizer(options)
@@ -45,6 +45,8 @@ const rowVirtualizer = useVirtualizer(options)
 const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
 const totalSize = computed(() => rowVirtualizer.value.getTotalSize())
 const wrapperStyle = computed(() => ({ height: toPx(totalSize.value) }))
+
+watch(() => props.rows, () => rowVirtualizer.value.measure())
 
 function toStyle(row) {
   return {
