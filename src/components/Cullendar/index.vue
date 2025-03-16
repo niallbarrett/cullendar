@@ -9,18 +9,15 @@
       <slot v-if="resource.isGroup" name="resourceGroup" v-bind="{ resource }"/>
       <slot v-else name="resource" v-bind="{ resource }"/>
     </Resources>
-
     <Timeline
       ref="timelineRef"
       :rows="resources"
       :columns="view.dates"
       :layout="layout"
       @scroll.passive="syncScroll('timeline', $event)">
-
       <template #head="{ date }">
         <slot name="dayHead" v-bind="{ date }"/>
       </template>
-
       <template #default="{ resource, date }">
         <Day
           v-if="!resource.isGroup"
@@ -37,7 +34,6 @@
           </slot>
         </Day>
       </template>
-
     </Timeline>
     <slot/>
   </div>
@@ -49,7 +45,7 @@ import { ref, toRefs } from 'vue'
 // Components
 import Timeline from './Timeline'
 import Resources from './Resources'
-import Day from './Day'
+import Day from './components/Day'
 
 const props = defineProps({
   cullendar: {

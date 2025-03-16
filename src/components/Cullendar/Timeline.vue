@@ -1,8 +1,9 @@
 <template>
-  <div ref="el" class="cullendar-timeline">
-    <div
-      class="cullendar-timeline-wrapper"
-      :style="wrapperStyle">
+  <RowVirtualiser
+    :layout="layout"
+    :wrapper-style="wrapperStyle"
+    :class="['cullendar-timeline', layout.timelineClass]">
+    <template #wrapper>
       <div class="cullendar-timeline-head">
         <div
           v-for="col in virtualColumns"
@@ -12,17 +13,17 @@
           <slot name="head" v-bind="{ date: columns[col.index] }"/>
         </div>
       </div>
-      <template v-for="row in virtualRows" :key="row.index">
-        <div
-          v-for="col in virtualColumns"
-          :key="col.index"
-          class="cullendar-timeline-virtual-col"
-          :style="toColStyle(row, col)">
-          <slot v-bind="{ resource: rows[row.index], date: columns[col.index] }"/>
-        </div>
-      </template>
-    </div>
-  </div>
+    </template>
+    <template #default="{ row, data }">
+      <div
+        v-for="col in virtualColumns"
+        :key="col.index"
+        class="cullendar-timeline-virtual-col"
+        :style="toColStyle(row, col)">
+        <slot v-bind="{ resource: data, date: columns[col.index] }"/>
+      </div>
+    </template>
+  </RowVirtualiser>
 </template>
 
 <script setup>
@@ -31,12 +32,10 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 // Utils
 import toPx from '@/components/Cullendar/utils/ToPx'
+// Components
+import RowVirtualiser from './components/RowVirtualiser'
 
 const props = defineProps({
-  rows: {
-    type: Array,
-    default: () => []
-  },
   columns: {
     type: Array,
     default: () => []
@@ -48,55 +47,43 @@ const props = defineProps({
 })
 
 const el = ref()
-const colSize = ref(props.layout.colWidth)
+const daySize = ref(props.layout.daySize)
 
-const rowOptions = computed(() => ({ // todo move to api layer
-  count: props.rows.length,
-  getScrollElement: () => el.value,
-  estimateSize: (i) => props.rows[i].size,
-  overscan: 0,
-  paddingStart: props.layout.headHeight
-}))
-const colOptions = computed(() => ({
+const options = computed(() => ({
   horizontal: true,
   count: props.columns.length,
   getScrollElement: () => el.value,
-  estimateSize: () => colSize.value,
+  estimateSize: () => daySize.value,
   overscan: 0
 }))
 
-const rowVirtualizer = useVirtualizer(rowOptions)
-const columnVirtualizer = useVirtualizer(colOptions)
+const virtualizer = useVirtualizer(options)
 
-const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
-const totalSizeRows = computed(() => rowVirtualizer.value.getTotalSize())
-const virtualColumns = computed(() => columnVirtualizer.value.getVirtualItems())
-const totalSizeColumns = computed(() => columnVirtualizer.value.getTotalSize())
-const wrapperStyle = computed(() => ({
-  height: toPx(totalSizeRows.value),
-  width: toPx(totalSizeColumns.value)
-}))
+const virtualColumns = computed(() => virtualizer.value.getVirtualItems())
+const totalSizeColumns = computed(() => virtualizer.value.getTotalSize())
+const wrapperStyle = computed(() => ({ width: toPx(totalSizeColumns.value) }))
 
-watch(() => props.layout.colWidth, () => setColSize())
-watch(() => props.rows, () => rowVirtualizer.value.measure())
+watch(() => props.layout.daySize, () => setDaySize())
 
-onMounted(() => setColSize())
+onMounted(() => {
+  el.value = document.querySelector('.cullendar-timeline')
+  setDaySize()
+})
 
-function setColSize() {
-  colSize.value = Math.max(props.layout.colWidth, Math.round(el.value?.clientWidth / props.columns.length))
-  columnVirtualizer.value.measure()
+function setDaySize() {
+  daySize.value = Math.max(props.layout.daySize, Math.floor(el.value.clientWidth / props.columns.length))
+  virtualizer.value.measure()
 }
 function toHeadStyle(col) {
   return {
-    height: toPx(props.layout.headHeight),
-    width: toPx(colSize.value),
-    transform: `translateX(${toPx(col.start)}) translateY(0)`,
-    background: '#fff'
+    height: toPx(props.layout.dayHeadSize),
+    width: toPx(daySize.value),
+    transform: `translateX(${toPx(col.start)}) translateY(0)`
   }
 }
 function toColStyle(row, col) {
   return {
-    width: toPx(colSize.value),
+    width: toPx(daySize.value),
     height: toPx(row.size),
     transform: `translateX(${toPx(col.start)}) translateY(${toPx(row.start)})`
   }
@@ -108,17 +95,14 @@ function toColStyle(row, col) {
     flex: 1;
     overflow: scroll;
   }
-  .cullendar-timeline-wrapper {
-    position: relative;
+  .cullendar-timeline-virtual-col {
+    position: absolute;
+    top: 0;
+    left: 0;
   }
   .cullendar-timeline-head {
     position: sticky;
     top: 0;
     z-index: 1;
-  }
-  .cullendar-timeline-virtual-col {
-    position: absolute;
-    top: 0;
-    left: 0;
   }
 </style>

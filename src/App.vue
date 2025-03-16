@@ -24,7 +24,7 @@
         </div>
       </template>
       <template #resource="{ resource }">
-        <div class="h-full px-2 flex items-center gap-1">
+        <div class="h-full px-2 flex items-center gap-1" @click="onTest">
           <span class="size-6 rounded-full bg-slate-100"/>
           <span class="truncate">{{ resource.label }}</span>
         </div>
@@ -51,9 +51,9 @@ import useDemo from './Demo'
 import Cullendar from '@/components/Cullendar'
 import Event from './components/Event'
 
-const ZONES = ['Europe/Dublin', 'Asia/Shanghai', 'America/New_York']
+const ZONES = ['Europe/Dublin', 'Asia/Shanghai', 'America/New_York', 'Antarctica/McMurdo', 'Asia/Kamchatka', 'Pacific/Pago_Pago', 'Asia/Kolkata']
 
-const date = ref('2025-03-12')
+const date = ref('2025-03-10')
 const nWeeks = ref(1)
 const firstDayOfWeek = ref(1)
 const timezone = ref(ZONES[0])
@@ -61,28 +61,29 @@ const timezone = ref(ZONES[0])
 const colWidth = ref(160)
 const headHeight = ref(40)
 
-const resources = ref([{ id: '0', label: 'Hello' }])
+const resources = ref([{ id: '0', label: 'Hello' }, { id: '1', label: 'Hello two' }])
 const events = ref([
   { id: '0', resourceId: '0', start: '2025-03-12T01:00:00.000Z', end: '2025-03-12T02:00:00.000Z' },
-  { id: '1', resourceId: '0', start: '2025-03-12T23:00:00.000Z', end: '2025-03-12T23:30:00.000Z' }
+  { id: '1', resourceId: '1', start: '2025-03-12T23:00:00.000Z', end: '2025-03-12T23:30:00.000Z' }
 ])
 
 const options = reactive({
   resources,
   events,
   view: {
-    date,
+    // date,
     timezone,
     nWeeks,
     firstDayOfWeek
   },
   layout: {
     colWidth,
-    headHeight
+    headHeight,
+    resourcesClass: 'bg-red-500',
+    timelineClass: 'bg-green-100'
   },
   callbacks: { onView: (e) => console.log('VIEW CHANGED', e) }
 })
-
 
 const { api: cullendar } = useDemo()
 cullendar.value = create(options)
@@ -94,5 +95,8 @@ function onHead(date) {
     start: date + 'T23:00:00.000Z',
     end: date + 'T23:30:00.000Z'
   })
+}
+function onTest() {
+  resources.value.push({ id: resources.value.length, label: 'yo' })
 }
 </script>

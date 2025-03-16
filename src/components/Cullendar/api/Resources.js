@@ -7,10 +7,11 @@ export default function build(resources, eventMap) {
 
 function toResource(val, events = new Set()) {
   const isGroup = !!val.resources
+  const maxEvents = Math.max(...Array.from(events.values()).map(v => v.size), 1)
 
   return {
     ...val,
     isGroup,
-    size: isGroup ? 24 : Math.max(...Array.from(events.values()).map(v => v.size)) * 48
+    maxEvents
   }
 }

@@ -20,5 +20,5 @@ const props = defineProps({
   }
 })
 
-const events = computed(() => props.events.get(props.resource.id).get(props.date))
+const events = computed(() => props.events.get(props.resource.id)?.get?.(props.date) || new Set())
 </script>
