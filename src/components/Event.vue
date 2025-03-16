@@ -17,11 +17,16 @@ const props = defineProps({
 
 const { api } = useDemo()
 
-console.log(api.value)
-
 const label = computed(() => `${formatTime(new Date(props.event.start)) } ⇢ ${formatTime(new Date(props.event.end))}`)
 
-function formatTime() {
-  return '00:00'
+function formatTime(date) {
+  const formatter = new Intl.DateTimeFormat(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+    timeZone: api.value.view.timezone
+  })
+
+  return formatter.format(date)
 }
 </script>

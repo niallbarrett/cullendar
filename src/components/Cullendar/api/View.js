@@ -3,26 +3,24 @@ import { addWeeks, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns'
 import DEFAULTS from './Defaults'
 // Utils
 import toISODate from '../utils/date/ToIsoDate'
+import toTimezoneDate from '../utils/date/ToTimezoneDate'
 
 export default function build(options) {
-  const timezone = options.timezone || DEFAULTS.timezone
-  const initialDate = options.date || toISODate(new Date()) // TODO: in timezone
+  const utcDate = toTimezoneDate(options.date, 'UTC')
   const nWeeks = Math.max(options.nWeeks || DEFAULTS.nWeeks, 1)
   const firstDayOfWeek = options.firstDayOfWeek ?? DEFAULTS.firstDayOfWeek
 
-  const start = startOfWeek(initialDate, { weekStartsOn: firstDayOfWeek })
+  const start = startOfWeek(utcDate, { weekStartsOn: firstDayOfWeek })
   const end = endOfWeek(addWeeks(start, nWeeks - 1), { weekStartsOn: firstDayOfWeek })
-  const d = eachDayOfInterval({
+  const dates = eachDayOfInterval({
     start,
     end
-  })
-
-  const dates = d.map(toISODate) // TODO: Timezone
+  }).map(toISODate)
 
   return {
     start: dates.at(0),
     end: dates.at(-1),
-    timezone,
+    timezone: options.timezone || DEFAULTS.timezone,
     nWeeks,
     firstDayOfWeek,
     dates
