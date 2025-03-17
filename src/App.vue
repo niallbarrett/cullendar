@@ -4,11 +4,14 @@
       <input v-model="date" type="date"/>
       <input v-model="nWeeks" type="number" min="1"/>
       <input v-model="firstDayOfWeek" type="number" min="0"/>
-      <input v-model="colWidth" type="number" min="0"/>
-      <input v-model="headHeight" type="number" min="0"/>
+      <input v-model="daySize" type="number" min="0"/>
+      <input v-model="dayHeadSize" type="number" min="0"/>
       <select v-model="timezone">
         <option v-for="zone in ZONES" :key="zone" :value="zone">{{ zone }}</option>
       </select>
+      <DragEvent :event="dragEvent" class="p-2 bg-black text-white">
+        Drag
+      </DragEvent>
     </div>
     <Cullendar
       :cullendar="cullendar"
@@ -20,22 +23,25 @@
       </template>
       <template #resourceGroup="{ resource }">
         <div class="h-full px-2 flex items-center text-slate-500">
-          <span class="truncate">{{ resource.label }}</span>
+          <span class="truncate">{{ resource.data.label }}</span>
         </div>
       </template>
       <template #resource="{ resource }">
-        <div class="h-full px-2 flex items-center gap-1" @click="onTest">
+        <div class="h-full px-2 flex items-center gap-1">
           <span class="size-6 rounded-full bg-slate-100"/>
-          <span class="truncate">{{ resource.label }}</span>
+          <span class="truncate">{{ resource.data.label }}</span>
         </div>
       </template>
-      <template #day="{ events }">
-        <div class="h-full flex flex-col justify-start">
+      <template #day="slot">
+        <DropDay
+          v-slot="{ events }"
+          v-bind="slot"
+          class="h-full flex flex-col justify-start">
           <Event
             v-for="event in events"
             :key="event.id"
             :event="event"/>
-        </div>
+        </DropDay>
       </template>
     </Cullendar>
   </div>
@@ -50,6 +56,8 @@ import useDemo from './Demo'
 // Components
 import Cullendar from '@/components/Cullendar'
 import Event from './components/Event'
+import DropDay from './components/Cullendar/components/DropDay'
+import DragEvent from './components/Cullendar/components/DragEvent'
 
 const ZONES = ['Europe/Dublin', 'Asia/Shanghai', 'America/New_York', 'Antarctica/McMurdo', 'Asia/Kamchatka', 'Pacific/Pago_Pago', 'Asia/Kolkata']
 
@@ -58,31 +66,38 @@ const nWeeks = ref(1)
 const firstDayOfWeek = ref(1)
 const timezone = ref(ZONES[0])
 
-const colWidth = ref(160)
-const headHeight = ref(40)
+const daySize = ref(160)
+const dayHeadSize = ref(40)
 
-const resources = ref([{ id: '0', label: 'Hello' }, { id: '1', label: 'Hello two' }])
+const dragEvent = { start: '09:00', end: '10:25' }
+
+const resources = ref([
+  { id: '2', label: 'Order 3', resources: [{ id: '2-0', label: 'Child 1' }] },
+  { id: '0', label: 'Order 2', nOrder: 1, resources: [{ id: '0-0', label: 'Child 1' }] },
+  { id: '1', label: 'Order 1', nOrder: 0, resources: [{ id: '1-0', label: 'Child 2', nOrder: 1 }, { id: '1-1', label: 'Child 1', nOrder: 0 }] },
+])
 const events = ref([
-  { id: '0', resourceId: '0', start: '2025-03-12T01:00:00.000Z', end: '2025-03-12T02:00:00.000Z' },
-  { id: '1', resourceId: '1', start: '2025-03-12T23:00:00.000Z', end: '2025-03-12T23:30:00.000Z' }
+  { id: '0', resourceId: '0-0', start: '2025-03-12T01:00:00.000Z', end: '2025-03-12T02:00:00.000Z' },
+  { id: '1', resourceId: '1-0', start: '2025-03-12T23:00:00.000Z', end: '2025-03-12T23:30:00.000Z' }
 ])
 
 const options = reactive({
   resources,
   events,
   view: {
-    // date,
+    date,
     timezone,
     nWeeks,
     firstDayOfWeek
   },
   layout: {
-    colWidth,
-    headHeight,
-    resourcesClass: 'bg-red-500',
-    timelineClass: 'bg-green-100'
+    daySize,
+    dayHeadSize
   },
-  callbacks: { onView: (e) => console.log('VIEW CHANGED', e) }
+  callbacks: {
+    onView: (e) => console.log('VIEW CHANGED', e),
+    onDrop
+  }
 })
 
 const { api: cullendar } = useDemo()
@@ -96,7 +111,12 @@ function onHead(date) {
     end: date + 'T23:30:00.000Z'
   })
 }
-function onTest() {
-  resources.value.push({ id: resources.value.length, label: 'yo' })
+function onDrop(e) {
+  const ev = events.value.find(event => event.id === e.data.id)
+
+  ev.start = e.date + ev.start.slice(10)
+  ev.end = e.date + ev.end.slice(10)
+  ev.resourceId = e.resource.id
+  console.log(e)
 }
 </script>

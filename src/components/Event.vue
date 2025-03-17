@@ -1,12 +1,16 @@
 <template>
-  <div class="ev max-h-12 min-w-0 p-1 flex-1 bg-white border border-black">
+  <DragEvent :event="event" class="ev max-h-12 min-w-0 p-1 flex-1 bg-white border border-black">
     <span class="text-xs">{{ label }}</span>
-  </div>
+  </DragEvent>
 </template>
 
 <script setup>
+// Libraries
 import { computed } from 'vue'
+// Composables
 import useDemo from '@/Demo'
+// Components
+import DragEvent from './Cullendar/components/DragEvent'
 
 const props = defineProps({
   event: {

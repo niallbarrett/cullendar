@@ -13,13 +13,16 @@ function create(options) {
   const events = computed(() => buildEvents(unref(options.events), view.value.timezone))
   const resources = computed(() => buildResources(unref(options.resources), events.value))
 
-  watch(view, () => options?.callbacks?.onView?.(view.value))
+  const callbacks = options.callbacks || {}
+
+  watch(view, () => callbacks.onView?.(view.value))
 
   const api = reactive({
     view,
     layout,
+    events,
     resources,
-    events
+    callbacks
   })
 
   return api
