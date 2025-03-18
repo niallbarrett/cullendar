@@ -82,7 +82,8 @@ function toPayload(data, options = {}) {
     ...options,
     data,
     date: props.date,
-    resource: props.resource
+    resource: props.resource,
+    view: view.value
   }
 }
 </script>

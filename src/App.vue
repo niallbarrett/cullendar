@@ -9,15 +9,15 @@
       <select v-model="timezone">
         <option v-for="zone in ZONES" :key="zone" :value="zone">{{ zone }}</option>
       </select>
-      <DragEvent :data="dragEvent" drag-class="bg-yellow-100" class="p-2 bg-black text-white">
-        Drag
+      <DragEvent :data="dragEvent" drag-class="bg-blue-500" class="p-0.5 bg-black text-white">
+        09:00 - 10:25
       </DragEvent>
     </div>
     <Cullendar
       :cullendar="cullendar"
       class="flex-1 bg-white border border-black text-sm">
       <template #dayHead="{ date }">
-        <div class="h-full px-2 flex items-center text-slate-500">
+        <div class="h-full px-2 flex items-center bg-white text-slate-500">
           <span class="truncate">{{ date }}</span>
         </div>
       </template>
@@ -93,7 +93,8 @@ const options = reactive({
   layout: {
     daySize,
     dayHeadSize,
-    dragoverClass: 'bg-green-500'
+    resourcesClass: 'w-64',
+    dragoverClass: 'bg-slate-100'
   },
   callbacks: {
     onView: (e) => console.log('VIEW CHANGED', e),

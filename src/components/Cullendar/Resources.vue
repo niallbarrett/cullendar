@@ -32,7 +32,6 @@ function toStyle(row) {
 
 <style scoped>
   .cullendar-resources {
-    width: 240px;
     overflow: scroll auto;
   }
   .cullendar-resources-virtual-row {
