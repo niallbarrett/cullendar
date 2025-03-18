@@ -9,7 +9,7 @@
       <select v-model="timezone">
         <option v-for="zone in ZONES" :key="zone" :value="zone">{{ zone }}</option>
       </select>
-      <DragEvent :data="dragEvent" class="p-2 bg-black text-white">
+      <DragEvent :data="dragEvent" drag-class="bg-yellow-100" class="p-2 bg-black text-white">
         Drag
       </DragEvent>
     </div>
