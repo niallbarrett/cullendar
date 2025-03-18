@@ -1,5 +1,5 @@
 <template>
-  <DragEvent :event="event" class="ev max-h-12 min-w-0 p-1 flex-1 bg-white border border-black">
+  <DragEvent :data="event" class="ev max-h-12 min-w-0 p-1 flex-1 bg-white border border-black">
     <span class="text-xs">{{ label }}</span>
   </DragEvent>
 </template>

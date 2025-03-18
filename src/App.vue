@@ -9,7 +9,7 @@
       <select v-model="timezone">
         <option v-for="zone in ZONES" :key="zone" :value="zone">{{ zone }}</option>
       </select>
-      <DragEvent :event="dragEvent" class="p-2 bg-black text-white">
+      <DragEvent :data="dragEvent" class="p-2 bg-black text-white">
         Drag
       </DragEvent>
     </div>
@@ -17,7 +17,7 @@
       :cullendar="cullendar"
       class="flex-1 bg-white border border-black text-sm">
       <template #dayHead="{ date }">
-        <div class="h-full px-2 flex items-center text-slate-500" @click="onHead(date)">
+        <div class="h-full px-2 flex items-center text-slate-500">
           <span class="truncate">{{ date }}</span>
         </div>
       </template>
@@ -92,31 +92,28 @@ const options = reactive({
   },
   layout: {
     daySize,
-    dayHeadSize
+    dayHeadSize,
+    dragoverClass: 'bg-green-500'
   },
   callbacks: {
     onView: (e) => console.log('VIEW CHANGED', e),
-    onDrop
+    onMoveEvent,
+    onAddEvent
   }
 })
 
 const { api: cullendar } = useDemo()
 cullendar.value = create(options)
 
-function onHead(date) {
-  events.value.push({
-    id: '1',
-    resourceId: '0',
-    start: date + 'T23:00:00.000Z',
-    end: date + 'T23:30:00.000Z'
-  })
+function onAddEvent(e) {
+  console.log(e)
 }
-function onDrop(e) {
-  const ev = events.value.find(event => event.id === e.data.id)
+function onMoveEvent(e) {
+  const ev = events.value.find(event => event.id === e.event.id)
 
-  ev.start = e.date + ev.start.slice(10)
-  ev.end = e.date + ev.end.slice(10)
-  ev.resourceId = e.resource.id
+  ev.start = e.event.start
+  ev.end = e.event.end
+  ev.resourceId = e.event.resourceId
   console.log(e)
 }
 </script>

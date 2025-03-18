@@ -7,6 +7,7 @@ export default function build(options) {
     eventSize: options.eventSize ?? DEFAULTS.eventSize,
     resourceGroupSize: options.resourceGroupSize ?? DEFAULTS.resourceGroupSize,
     resourcesClass: options.resourcesClass,
-    timelineClass: options.timelineClass
+    timelineClass: options.timelineClass,
+    dragoverClass: options.dragoverClass
   }
 }

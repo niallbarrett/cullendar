@@ -25,7 +25,7 @@
           :date="date"
           :resource="resource"
           :events="eventsMap">
-          <slot name="day" v-bind="{ resource, date, events, callbacks }">
+          <slot name="day" v-bind="{ resource, date, events, api: cullendar }">
             <slot
               v-for="event in events"
               :key="event.id"
@@ -57,7 +57,7 @@ const props = defineProps({
 const resourcesRef = ref()
 const timelineRef = ref()
 
-const { layout, view, resources, events: eventsMap, callbacks } = toRefs(props.cullendar)
+const { layout, view, resources, events: eventsMap } = toRefs(props.cullendar)
 
 function syncScroll(source, e) {
   const target = source === 'resources' ? timelineRef : resourcesRef

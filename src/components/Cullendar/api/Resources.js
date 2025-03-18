@@ -6,7 +6,7 @@ const EXCLUDED_FIELDS = ['id', 'resources', 'nOrder', 'isGroup', 'maxEvents']
 export default function build(resources, eventMap) {
   const sortedGroups = sortByNOrder(resources)
 
-  // TODO: collapsing
+  // TODO: collapsing separate internal map, isOpen
   return sortedGroups.flatMap(r => [r, ...sortByNOrder(toArray(r.resources))].map(r => toResource(r, eventMap.get(r.id))))
 }
 
