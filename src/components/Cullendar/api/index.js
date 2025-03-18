@@ -5,6 +5,7 @@ import buildView from './View'
 import buildLayout from './Layout'
 import buildEvents from './Events'
 import buildResources from './Resources'
+import buildCallbacks from './Callbacks'
 
 function create(options) {
   const view = computed(() => buildView(options.view))
@@ -13,9 +14,9 @@ function create(options) {
   const events = computed(() => buildEvents(unref(options.events), view.value.timezone))
   const resources = computed(() => buildResources(unref(options.resources), events.value))
 
-  const callbacks = options.callbacks || {}
+  const callbacks = computed(() => buildCallbacks(options.callbacks))
 
-  watch(view, () => callbacks.onView?.(view.value))
+  watch(view, () => callbacks.value.onView(view.value))
 
   const api = reactive({
     view,

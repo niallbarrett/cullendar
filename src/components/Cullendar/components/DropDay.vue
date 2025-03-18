@@ -1,9 +1,9 @@
 <template>
   <div
     @dragenter="onDragenter"
+    @dragover.prevent
     @dragleave="onDragleave"
-    @drop="onDrop"
-    @dragover.prevent>
+    @drop="onDrop">
     <slot v-bind="{ date, resource, events }"/>
   </div>
 </template>
@@ -37,7 +37,7 @@ const props = defineProps({
 
 const { view, layout, callbacks } = toRefs(props.api)
 
-const dragoverClasses = computed(() => buildClasses(layout.value.dragoverClass))
+const dragoverClasses = computed(() => [...toArray(layout.value.dragoverClass?.split?.(' ')), 'cullendar-drop-day-is-active'])
 
 function onDragenter(e) {
   e.target.classList.add(...dragoverClasses.value)
@@ -47,14 +47,18 @@ function onDragleave(e) {
 }
 function onDrop(e) {
   e.target.classList.remove(...dragoverClasses.value)
-  const data = JSON.parse(e.dataTransfer.getData('event-type'))
+
+  const data = JSON.parse(e.dataTransfer.getData('text/plain'))
 
   if (!data.id)
-    return callbacks.value.onAddEvent?.({ data, date: props.date, resource: props.resource })
+    return callbacks.value.onAddEvent(toPayload(data))
 
   const event = toNewEvent(data)
 
-  callbacks.value.onMoveEvent?.({ data, event, date: props.date, resource: props.resource })
+  if (!callbacks.value.onBeforeDropEvent(toPayload(data, { event })))
+    return
+
+  callbacks.value.onMoveEvent(toPayload(data, { event }))
 }
 function toNewEvent(event) {
   const utcDate = toTimezoneDate(props.date, 'UTC')
@@ -73,15 +77,18 @@ function toDate(date, utcDate) {
     date: utcDate.getDate()
   }).toISOString()
 }
-function buildClasses(classes) {
-  const arr = toArray(classes?.split?.(' '))
-
-  return [...arr, 'dragging']
+function toPayload(data, options = {}) {
+  return {
+    ...options,
+    data,
+    date: props.date,
+    resource: props.resource
+  }
 }
 </script>
 
-<style scoped>
-  .dragging * {
+<style>
+  .cullendar-drop-day-is-active * {
     pointer-events: none;
   }
 </style>

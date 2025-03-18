@@ -97,6 +97,7 @@ const options = reactive({
   },
   callbacks: {
     onView: (e) => console.log('VIEW CHANGED', e),
+    onBeforeDropEvent,
     onMoveEvent,
     onAddEvent
   }
@@ -105,6 +106,10 @@ const options = reactive({
 const { api: cullendar } = useDemo()
 cullendar.value = create(options)
 
+function onBeforeDropEvent(e) {
+  console.log(e)
+  return true
+}
 function onAddEvent(e) {
   console.log(e)
 }

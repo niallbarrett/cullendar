@@ -18,7 +18,7 @@ const props = defineProps({
 function onDragstart(e) {
   e.target.classList.add('opacity-10')
   e.dataTransfer.effectAllowed = 'move' // TODO: depending on new or not
-  e.dataTransfer.setData('event-type', JSON.stringify(props.data))
+  e.dataTransfer.setData('text/plain', JSON.stringify(props.data))
 
   console.log('drag start', e, props.data)
 }
