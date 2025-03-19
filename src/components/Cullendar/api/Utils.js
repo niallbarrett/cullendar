@@ -1,10 +1,6 @@
 import toTimezoneDate from '../utils/date/ToTimezoneDate'
 
 export default function build(view, events) {
-  function toUTC(date) {
-    return toTimezoneDate(date, 'UTC')
-  }
-
   function toTimezone(date) {
     return toTimezoneDate(date, view.value.timezone)
   }
@@ -17,7 +13,6 @@ export default function build(view, events) {
   }
 
   return {
-    toUTC,
     toTimezone,
     getEvents
   }

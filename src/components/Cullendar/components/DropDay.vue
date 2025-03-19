@@ -13,6 +13,8 @@
 // Libraries
 import { ref, computed, toRefs } from 'vue'
 import { set } from 'date-fns'
+// Utils
+import toUTC from '../utils/date/ToUTC'
 
 const props = defineProps({
   date: {
@@ -64,7 +66,7 @@ function onDrop(e) {
   callbacks.value.onMoveEvent(toPayload(data, { times }))
 }
 function toNewTimes(event) {
-  const utcDate = utils.value.toUTC(props.date)
+  const utcDate = toUTC(props.date)
 
   return {
     start: toDate(event.start, utcDate),

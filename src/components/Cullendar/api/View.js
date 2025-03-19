@@ -3,10 +3,10 @@ import { addWeeks, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns'
 import DEFAULTS from './Defaults'
 // Utils
 import toISODate from '../utils/date/ToIsoDate'
-import toTimezoneDate from '../utils/date/ToTimezoneDate'
+import toUTC from '../utils/date/ToUTC'
 
 export default function build(options = {}) {
-  const utcDate = toTimezoneDate(options.date, 'UTC')
+  const utcDate = toUTC(options.date)
   const nWeeks = Math.max(options.nWeeks || DEFAULTS.nWeeks, 1)
   const firstDayOfWeek = options.firstDayOfWeek ?? DEFAULTS.firstDayOfWeek
 
