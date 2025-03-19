@@ -11,7 +11,7 @@
 
 <script setup>
 // Utils
-import toPx from '@/components/Cullendar/utils/ToPx'
+import toPx from './utils/format/ToPx'
 // Components
 import RowVirtualiser from './components/RowVirtualiser'
 

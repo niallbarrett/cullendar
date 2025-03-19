@@ -31,7 +31,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 // Utils
-import toPx from '@/components/Cullendar/utils/ToPx'
+import toPx from './utils/format/ToPx'
 // Components
 import RowVirtualiser from './components/RowVirtualiser'
 

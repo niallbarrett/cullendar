@@ -15,7 +15,7 @@
 import { ref, computed, watch } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 // Utils
-import toPx from '@/components/Cullendar/utils/ToPx'
+import toPx from '../utils/format/ToPx'
 
 const props = defineProps({
   rows: {
