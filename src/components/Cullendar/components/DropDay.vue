@@ -56,21 +56,19 @@ function onDrop(e) {
   if (!data.id)
     return callbacks.value.onAddEvent(toPayload(data))
 
-  const event = toNewEvent(data)
+  const times = toNewTimes(data)
 
-  if (!callbacks.value.onBeforeDropEvent(toPayload(data, { event })))
+  if (!callbacks.value.onBeforeDropEvent(toPayload(data, { times })))
     return
 
-  callbacks.value.onMoveEvent(toPayload(data, { event }))
+  callbacks.value.onMoveEvent(toPayload(data, { times }))
 }
-function toNewEvent(event) {
+function toNewTimes(event) {
   const utcDate = utils.value.toUTC(props.date)
 
   return {
-    ...event,
     start: toDate(event.start, utcDate),
-    end: toDate(event.end, utcDate),
-    resourceId: props.resource.id // TODO: May be multiple
+    end: toDate(event.end, utcDate)
   }
 }
 function toDate(date, utcDate) {
