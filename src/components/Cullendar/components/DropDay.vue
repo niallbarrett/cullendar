@@ -1,19 +1,19 @@
 <template>
   <div
+    :class="classes"
     @dragenter="onDragenter"
     @dragover.prevent
     @dragleave="onDragleave"
     @drop="onDrop">
-    <slot v-bind="{ date, resource, events }"/>
+    <slot v-bind="{ date, resource, events, isOver }"/>
   </div>
 </template>
 
 <script setup>
 // Libraries
-import { computed, toRefs } from 'vue'
+import { ref, computed, toRefs } from 'vue'
 import { set } from 'date-fns'
 // Utils
-import toArray from '../utils/ToArray'
 import toTimezoneDate from '../utils/date/ToTimezoneDate'
 
 const props = defineProps({
@@ -32,21 +32,26 @@ const props = defineProps({
   api: {
     type: Object,
     required: true
+  },
+  dragoverClass: {
+    type: String,
+    default: undefined
   }
 })
 
-const { view, layout, callbacks } = toRefs(props.api)
+const { view, callbacks } = toRefs(props.api)
+const isOver = ref(false)
 
-const dragoverClasses = computed(() => [...toArray(layout.value.dragoverClass?.split?.(' ')), 'cullendar-drop-day-is-active'])
+const classes = computed(() => ({ [`${props.dragoverClass} cullendar-drop-day-is-active`]: isOver.value }))
 
-function onDragenter(e) {
-  e.target.classList.add(...dragoverClasses.value)
+function onDragenter() {
+  isOver.value = true
 }
-function onDragleave(e) {
-  e.target.classList.remove(...dragoverClasses.value)
+function onDragleave() {
+  isOver.value = false
 }
 function onDrop(e) {
-  e.target.classList.remove(...dragoverClasses.value)
+  isOver.value = false
 
   const data = JSON.parse(e.dataTransfer.getData('text/plain'))
 

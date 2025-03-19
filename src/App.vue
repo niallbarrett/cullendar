@@ -34,9 +34,11 @@
       </template>
       <template #day="slot">
         <DropDay
-          v-slot="{ events }"
+          v-slot="{ events, isOver }"
           v-bind="slot"
-          class="h-full flex flex-col justify-start">
+          class="h-full flex flex-col justify-start"
+          dragover-class="bg-red-500">
+          {{ isOver }}
           <Event
             v-for="event in events"
             :key="event.id"
@@ -50,7 +52,7 @@
 <script setup>
 // Libraries
 import { ref, reactive } from 'vue'
-import { create } from '@/components/Cullendar/api'
+import create from '@/components/Cullendar/api'
 // Composables
 import useDemo from './Demo'
 // Components
@@ -93,8 +95,7 @@ const options = reactive({
   layout: {
     daySize,
     dayHeadSize,
-    resourcesClass: 'w-64',
-    dragoverClass: 'bg-slate-100'
+    resourcesClass: 'w-64'
   },
   callbacks: {
     onView: (e) => console.log('VIEW CHANGED', e),

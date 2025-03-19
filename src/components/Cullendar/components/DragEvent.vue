@@ -25,6 +25,7 @@ const dragClasses = computed(() => props.dragClass?.split?.(' ') || [])
 
 function onDragstart(e) {
   e.target.classList.add(...dragClasses.value)
+
   e.dataTransfer.effectAllowed = props.data.id ? 'move' : 'copy'
   e.dataTransfer.setData('text/plain', JSON.stringify(props.data))
 }
