@@ -64,6 +64,7 @@ const totalSizeColumns = computed(() => virtualizer.value.getTotalSize())
 const wrapperStyle = computed(() => ({ width: toPx(totalSizeColumns.value) }))
 
 watch(() => props.layout.daySize, () => setDaySize())
+watch(totalSizeColumns, () => setDaySize())
 
 onMounted(() => {
   el.value = document.querySelector('.cullendar-timeline')
