@@ -21,11 +21,12 @@
       <template #default="{ resource, date }">
         <Day
           v-if="!resource.isGroup"
-          v-slot="{ events }"
+          v-slot="{ events, api }"
+          :api="cullendar"
           :date="date"
           :resource="resource"
           :events="eventsMap">
-          <slot name="day" v-bind="{ resource, date, events, api: cullendar }">
+          <slot name="day" v-bind="{ resource, date, events, api }">
             <slot
               v-for="event in events"
               :key="event.id"

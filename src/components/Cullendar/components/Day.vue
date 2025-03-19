@@ -1,11 +1,15 @@
 <template>
-  <slot v-bind="{ events }"/>
+  <slot v-bind="{ api, events }"/>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, toRefs } from 'vue'
 
 const props = defineProps({
+  api: {
+    type: Object,
+    required: true
+  },
   date: {
     type: String,
     required: true
@@ -20,5 +24,7 @@ const props = defineProps({
   }
 })
 
-const events = computed(() => props.events.get(props.resource.id)?.get?.(props.date) || new Set())
+const { utils } = toRefs(props.api)
+
+const events = computed(() => utils.value.getEvents(props.resource.id, props.date))
 </script>

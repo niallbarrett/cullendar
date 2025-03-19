@@ -6,6 +6,7 @@ import buildLayout from './Layout'
 import buildEvents from './Events'
 import buildResources from './Resources'
 import buildCallbacks from './Callbacks'
+import buildUtils from './Utils'
 
 function create(options) {
   const view = computed(() => buildView(options.view))
@@ -15,6 +16,7 @@ function create(options) {
   const resources = computed(() => buildResources(unref(options.resources), events.value))
 
   const callbacks = computed(() => buildCallbacks(options.callbacks))
+  const utils = buildUtils(events)
 
   watch(view, () => callbacks.value.onView(view.value))
 
@@ -23,7 +25,8 @@ function create(options) {
     layout,
     events,
     resources,
-    callbacks
+    callbacks,
+    utils
   })
 
   return api
