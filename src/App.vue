@@ -34,11 +34,10 @@
       </template>
       <template #day="slot">
         <DropDay
-          v-slot="{ events, isOver }"
+          v-slot="{ events }"
           v-bind="slot"
           class="h-full flex flex-col justify-start"
           dragover-class="bg-red-500">
-          {{ isOver }}
           <Event
             v-for="event in events"
             :key="event.id"
@@ -116,11 +115,11 @@ function onAddEvent(e) {
   console.log(e)
 }
 function onMoveEvent(e) {
-  const ev = events.value.find(event => event.id === e.event.id)
+  const ev = events.value.find(event => event.id === e.data.id)
 
-  ev.start = e.event.start
-  ev.end = e.event.end
-  ev.resourceId = e.event.resourceId
+  ev.start = e.times.start
+  ev.end = e.times.end
+  ev.resourceId = e.resource.id
   console.log(e)
 }
 </script>

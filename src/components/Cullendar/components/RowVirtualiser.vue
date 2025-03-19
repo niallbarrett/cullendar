@@ -46,7 +46,10 @@ const virtualizer = useVirtualizer(options)
 
 const virtualRows = computed(() => virtualizer.value.getVirtualItems())
 const totalSize = computed(() => virtualizer.value.getTotalSize())
-const wrapperStyle = computed(() => ({ height: toPx(totalSize.value), ...props.wrapperStyle }))
+const wrapperStyle = computed(() => ({
+  height: toPx(totalSize.value),
+  ...props.wrapperStyle
+}))
 
 watch(() => props.rows, () => virtualizer.value.measure())
 
