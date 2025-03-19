@@ -3,7 +3,7 @@ import removeKeys from '../utils/object/RemoveKeys'
 
 const EXCLUDED_FIELDS = ['id', 'resources', 'nOrder', 'isGroup', 'maxEvents']
 
-export default function build(resources, eventMap) {
+export default function build(resources = [], eventMap = new Map()) {
   const sortedGroups = sortByNOrder(resources)
 
   // TODO: collapsing separate internal map, isOpen

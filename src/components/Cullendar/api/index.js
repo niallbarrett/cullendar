@@ -16,7 +16,7 @@ export default function create(options) {
   const resources = computed(() => buildResources(unref(options.resources), events.value))
 
   const callbacks = computed(() => buildCallbacks(options.callbacks))
-  const utils = buildUtils(events)
+  const utils = buildUtils(view, events)
 
   watch(view, () => callbacks.value.onView(view.value))
 

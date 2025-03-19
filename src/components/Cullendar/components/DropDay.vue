@@ -13,8 +13,6 @@
 // Libraries
 import { ref, computed, toRefs } from 'vue'
 import { set } from 'date-fns'
-// Utils
-import toTimezoneDate from '../utils/date/ToTimezoneDate'
 
 const props = defineProps({
   date: {
@@ -39,7 +37,7 @@ const props = defineProps({
   }
 })
 
-const { view, callbacks } = toRefs(props.api)
+const { view, utils, callbacks } = toRefs(props.api)
 const isOver = ref(false)
 
 const classes = computed(() => ({ [`${props.dragoverClass} cullendar-drop-day-is-active`]: isOver.value }))
@@ -66,7 +64,7 @@ function onDrop(e) {
   callbacks.value.onMoveEvent(toPayload(data, { event }))
 }
 function toNewEvent(event) {
-  const utcDate = toTimezoneDate(props.date, 'UTC')
+  const utcDate = utils.value.toUTC(props.date)
 
   return {
     ...event,
@@ -76,7 +74,7 @@ function toNewEvent(event) {
   }
 }
 function toDate(date, utcDate) {
-  return set(toTimezoneDate(date, view.value.timezone), {
+  return set(utils.value.toTimezone(date), {
     year: utcDate.getFullYear(),
     month: utcDate.getMonth(),
     date: utcDate.getDate()

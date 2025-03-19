@@ -1,6 +1,6 @@
 import DEFAULTS from './Defaults'
 
-export default function build(options) {
+export default function build(options = {}) {
   return {
     daySize: options.daySize ?? DEFAULTS.daySize,
     dayHeadSize: options.dayHeadSize ?? DEFAULTS.dayHeadSize,

@@ -1,4 +1,14 @@
-export default function build(events) {
+import toTimezoneDate from '../utils/date/ToTimezoneDate'
+
+export default function build(view, events) {
+  function toUTC(date) {
+    return toTimezoneDate(date, 'UTC')
+  }
+
+  function toTimezone(date) {
+    return toTimezoneDate(date, view.value.timezone)
+  }
+
   function getEvents(resourceId, date) {
     const resourceEvents = events.value.get(resourceId) || new Map()
     const forDate = date ? resourceEvents.get(date) : resourceEvents
@@ -6,5 +16,9 @@ export default function build(events) {
     return forDate || new Set()
   }
 
-  return { getEvents }
+  return {
+    toUTC,
+    toTimezone,
+    getEvents
+  }
 }

@@ -5,7 +5,7 @@ import DEFAULTS from './Defaults'
 import toISODate from '../utils/date/ToIsoDate'
 import toTimezoneDate from '../utils/date/ToTimezoneDate'
 
-export default function build(options) {
+export default function build(options = {}) {
   const utcDate = toTimezoneDate(options.date, 'UTC')
   const nWeeks = Math.max(options.nWeeks || DEFAULTS.nWeeks, 1)
   const firstDayOfWeek = options.firstDayOfWeek ?? DEFAULTS.firstDayOfWeek
