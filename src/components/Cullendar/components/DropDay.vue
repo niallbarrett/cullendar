@@ -1,9 +1,9 @@
 <template>
   <div
     :class="classes"
-    @dragenter="onDragenter"
+    @dragenter="isOver = true"
     @dragover.prevent
-    @dragleave="onDragleave"
+    @dragleave="isOver = false"
     @drop="onDrop">
     <slot v-bind="{ date, resource, events, isOver }"/>
   </div>
@@ -26,7 +26,7 @@ const props = defineProps({
     required: true
   },
   events: {
-    type: Set,
+    type: Array,
     required: true
   },
   api: {
@@ -44,12 +44,6 @@ const isOver = ref(false)
 
 const classes = computed(() => ({ [`${props.dragoverClass} cullendar-drop-day-is-active`]: isOver.value }))
 
-function onDragenter() {
-  isOver.value = true
-}
-function onDragleave() {
-  isOver.value = false
-}
 function onDrop(e) {
   isOver.value = false
 
