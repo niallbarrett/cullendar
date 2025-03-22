@@ -1,6 +1,6 @@
 <template>
   <div
-    draggable="true"
+    :draggable="draggable"
     @dragstart.stop="onDragstart"
     @dragend.stop="onDragend">
     <slot/>
@@ -18,6 +18,10 @@ const props = defineProps({
   dragClass: {
     type: String,
     default: undefined
+  },
+  draggable: {
+    type: Boolean,
+    default: true
   }
 })
 

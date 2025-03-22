@@ -1,6 +1,7 @@
 <template>
   <DragEvent
     :data="event"
+    :draggable="event.id === '0'"
     drag-class="opacity-50"
     class="ev max-h-12 min-w-0 p-1 flex-1 bg-white border border-black">
     <span class="text-xs">{{ label }}</span>
