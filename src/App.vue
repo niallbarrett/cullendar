@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen p-12 flex flex-col gap-1 ">
+  <div class="h-screen p-12 flex flex-col gap-1">
     <div class="p-2 flex border border-black">
       <input v-model="date" type="date"/>
       <input v-model="nWeeks" type="number" min="1"/>
@@ -52,6 +52,9 @@
 // Libraries
 import { ref, reactive } from 'vue'
 import create from '@/components/Cullendar/api'
+import { set } from 'date-fns'
+// Utils
+import toUTC from './components/Cullendar/utils/date/ToUTC'
 // Composables
 import useDemo from './Demo'
 // Components
@@ -59,6 +62,8 @@ import Cullendar from '@/components/Cullendar'
 import Event from './components/Event'
 import DropDay from './components/Cullendar/components/DropDay'
 import DragEvent from './components/Cullendar/components/DragEvent'
+import toTimezoneDate from './components/Cullendar/utils/date/ToTimezoneDate'
+
 
 const ZONES = ['Europe/Dublin', 'Asia/Shanghai', 'America/New_York', 'Antarctica/McMurdo', 'Asia/Kamchatka', 'Pacific/Pago_Pago', 'Asia/Kolkata']
 
@@ -79,7 +84,7 @@ const resources = ref([
 ])
 const events = ref([
   { id: '0', resourceId: '0-0', start: '2025-03-12T01:00:00.000Z', end: '2025-03-12T02:00:00.000Z' },
-  { id: '1', resourceId: '1-0', start: '2025-03-12T23:00:00.000Z', end: '2025-03-12T23:30:00.000Z' }
+  { id: '1', resourceId: '0-0', start: '2025-03-12T00:00:00.000Z', end: '2025-03-12T01:00:00.000Z' }
 ])
 
 const options = reactive({
@@ -112,7 +117,16 @@ function onBeforeDropEvent(e) {
   return true
 }
 function onAddEvent(e) {
-  console.log(e)
+  const utcDate = toUTC(e.date)
+
+  const event = {
+    id: events.value.length,
+    start: setTime(utcDate, e.data.start, e.view.timezone),
+    end: setTime(utcDate, e.data.end, e.view.timezone),
+    resourceId: e.resource.id
+  }
+
+  events.value.push(event)
 }
 function onMoveEvent(e) {
   const ev = events.value.find(event => event.id === e.data.id)
@@ -121,5 +135,18 @@ function onMoveEvent(e) {
   ev.end = e.times.end
   ev.resourceId = e.resource.id
   console.log(e)
+}
+function setTime(date, time, timezone) {
+  const [hours, minutes] = time.split(':')
+
+  return set(toTimezoneDate(date, timezone), {
+    year: date.getFullYear(),
+    month: date.getMonth(),
+    date: date.getDate(),
+    hours,
+    minutes,
+    seconds: 0,
+    milliseconds: 0
+  }).toISOString()
 }
 </script>

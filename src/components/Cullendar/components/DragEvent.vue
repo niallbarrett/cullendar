@@ -1,6 +1,7 @@
 <template>
   <div
     :draggable="draggable"
+    class="cullendar-drag-event"
     @dragstart.stop="onDragstart"
     @dragend.stop="onDragend">
     <slot/>
@@ -31,9 +32,15 @@ function onDragstart(e) {
   e.target.classList.add(...dragClasses.value)
 
   e.dataTransfer.effectAllowed = props.data.id ? 'move' : 'copy'
-  e.dataTransfer.setData('text/plain', JSON.stringify(props.data))
+  e.dataTransfer.setData('cullendar-drag-event', JSON.stringify(props.data))
 }
 function onDragend(e) {
   e.target.classList.remove(...dragClasses.value)
 }
 </script>
+
+<style scoped>
+  .cullendar-drag-event {
+    user-select: none;
+  }
+</style>

@@ -1,7 +1,7 @@
 <template>
   <div
     :class="classes"
-    @dragenter="isOver = true"
+    @dragenter="onDragenter"
     @dragover.prevent
     @dragleave="isOver = false"
     @drop="onDrop">
@@ -44,10 +44,17 @@ const isOver = ref(false)
 
 const classes = computed(() => ({ [`${props.dragoverClass} cullendar-drop-day-is-active`]: isOver.value }))
 
+function onDragenter(e) {
+  if (e.dataTransfer.types.includes('cullendar-drag-event'))
+    isOver.value = true
+}
 function onDrop(e) {
+  if (!e.dataTransfer.types.includes('cullendar-drag-event'))
+    return
+
   isOver.value = false
 
-  const data = JSON.parse(e.dataTransfer.getData('text/plain'))
+  const data = JSON.parse(e.dataTransfer.getData('cullendar-drag-event'))
 
   if (!data.id)
     return callbacks.value.onAddEvent(toPayload(data))
