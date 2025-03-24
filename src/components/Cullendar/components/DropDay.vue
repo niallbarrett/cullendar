@@ -15,6 +15,7 @@ import { ref, computed, toRefs } from 'vue'
 import { addMinutes, differenceInMinutes, set } from 'date-fns'
 // Utils
 import toUTC from '../utils/date/ToUTC'
+import toISODate from '../utils/date/ToIsoDate'
 
 const props = defineProps({
   date: {
@@ -35,7 +36,7 @@ const props = defineProps({
   },
   dragoverClass: {
     type: String,
-    default: undefined
+    default: ''
   }
 })
 
@@ -58,6 +59,9 @@ function onDrop(e) {
 
   if (!data.id)
     return callbacks.value.onAddEvent(toPayload(data))
+
+  if (toISODate(utils.value.toTimezone(data.start)) === props.date)
+    return
 
   const times = toNewTimes(data)
 
