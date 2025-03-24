@@ -12,7 +12,7 @@
 <script setup>
 // Libraries
 import { ref, computed, toRefs } from 'vue'
-import { set } from 'date-fns'
+import { addMinutes, differenceInMinutes, set } from 'date-fns'
 // Utils
 import toUTC from '../utils/date/ToUTC'
 
@@ -67,11 +67,12 @@ function onDrop(e) {
   callbacks.value.onMoveEvent(toPayload(data, { times }))
 }
 function toNewTimes(event) {
-  const utcDate = toUTC(props.date)
+  const duration = differenceInMinutes(event.end, event.start)
+  const start = toDate(event.start, toUTC(props.date))
 
   return {
-    start: toDate(event.start, utcDate),
-    end: toDate(event.end, utcDate)
+    start,
+    end: addMinutes(start, duration).toISOString()
   }
 }
 function toDate(date, utcDate) {

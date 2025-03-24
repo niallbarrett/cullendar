@@ -9,8 +9,11 @@
       <select v-model="timezone">
         <option v-for="zone in ZONES" :key="zone" :value="zone">{{ zone }}</option>
       </select>
-      <DragEvent :data="dragEvent" drag-class="bg-blue-500" class="p-0.5 bg-black text-white">
-        09:00 - 10:25
+      <DragEvent :data="{ start: '00:00', duration: 480 }" drag-class="bg-blue-500" class="p-0.5 bg-black text-white">
+        00:00 - 08:00
+      </DragEvent>
+      <DragEvent :data="{ start: '23:00', duration: 420 }" drag-class="bg-blue-500" class="p-0.5 bg-black text-white">
+        23:00 - 06:00
       </DragEvent>
     </div>
     <Cullendar
@@ -52,7 +55,7 @@
 // Libraries
 import { ref, reactive } from 'vue'
 import create from '@/components/Cullendar/api'
-import { set } from 'date-fns'
+import { addMinutes, set } from 'date-fns'
 // Utils
 import toUTC from './components/Cullendar/utils/date/ToUTC'
 // Composables
@@ -75,8 +78,6 @@ const timezone = ref(ZONES[0])
 const daySize = ref(160)
 const dayHeadSize = ref(40)
 
-const dragEvent = { start: '09:00', end: '10:25' }
-
 const resources = ref([
   { id: '2', label: 'Order 3', resources: [{ id: '2-0', label: 'Child 1' }] },
   { id: '0', label: 'Order 2', nOrder: 1, resources: [{ id: '0-0', label: 'Child 1' }] },
@@ -84,7 +85,7 @@ const resources = ref([
 ])
 const events = ref([
   { id: '0', resourceId: '0-0', start: '2025-03-12T01:00:00.000Z', end: '2025-03-12T02:00:00.000Z' },
-  { id: '1', resourceId: '0-0', start: '2025-03-12T00:00:00.000Z', end: '2025-03-12T01:00:00.000Z' }
+  { id: '1', resourceId: '0-0', start: '2025-03-12T23:00:00.000Z', end: '2025-03-13T06:00:00.000Z' }
 ])
 
 const options = reactive({
@@ -117,12 +118,13 @@ function onBeforeDropEvent(e) {
   return true
 }
 function onAddEvent(e) {
-  const utcDate = toUTC(e.date)
+  const start = setTime(toUTC(e.date), e.data.start, e.view.timezone)
+  const end = addMinutes(start, e.data.duration).toISOString()
 
   const event = {
     id: events.value.length,
-    start: setTime(utcDate, e.data.start, e.view.timezone),
-    end: setTime(utcDate, e.data.end, e.view.timezone),
+    start,
+    end,
     resourceId: e.resource.id
   }
 
