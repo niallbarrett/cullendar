@@ -1,11 +1,12 @@
 <template>
-  <div
-    :class="classes"
-    @dragenter="onDragenter"
-    @dragover.prevent
-    @dragleave="isOver = false"
-    @drop="onDrop">
-    <slot v-bind="{ date, resource, events, isOver }"/>
+  <div :class="classes">
+    <span
+      class="cullendar-day-dropzone"
+      @dragenter="onDragenter"
+      @dragover.prevent
+      @dragleave="isDragOver = false"
+      @drop="onDrop"/>
+    <slot v-bind="{ date, resource, events, isDragOver }"/>
   </div>
 </template>
 
@@ -13,7 +14,10 @@
 // Libraries
 import { ref, computed, toRefs } from 'vue'
 import { addMinutes, differenceInMinutes, set } from 'date-fns'
+// Config
+import constants from '../api/Constants'
 // Utils
+import toArray from '../utils/ToArray'
 import toUTC from '../utils/date/ToUTC'
 import toISODate from '../utils/date/ToIsoDate'
 
@@ -41,26 +45,26 @@ const props = defineProps({
 })
 
 const { view, utils, callbacks } = toRefs(props.api)
-const isOver = ref(false)
+const isDragOver = ref(false)
 
-const classes = computed(() => ({ [`${props.dragoverClass} cullendar-drop-day-is-active`]: isOver.value }))
+const classes = computed(() => isDragOver.value ? { [props.dragoverClass]: true } : {})
 
 function onDragenter(e) {
-  if (e.dataTransfer.types.includes('cullendar-drag-event'))
-    isOver.value = true
+  if (e.dataTransfer.types.includes(constants.DATA_TRANSFER_TYPE))
+    isDragOver.value = true
 }
 function onDrop(e) {
-  if (!e.dataTransfer.types.includes('cullendar-drag-event'))
+  if (!e.dataTransfer.types.includes(constants.DATA_TRANSFER_TYPE))
     return
 
-  isOver.value = false
+  isDragOver.value = false
 
-  const data = JSON.parse(e.dataTransfer.getData('cullendar-drag-event'))
+  const data = JSON.parse(e.dataTransfer.getData(constants.DATA_TRANSFER_TYPE))
 
   if (!data.id)
     return callbacks.value.onAddEvent(toPayload(data))
 
-  if (toISODate(utils.value.toTimezone(data.start)) === props.date)
+  if ((toISODate(utils.value.toTimezone(data.start)) === props.date) && toArray(data.resourceId).includes(props.resource.id))
     return
 
   const times = toNewTimes(data)
@@ -98,7 +102,12 @@ function toPayload(data, options = {}) {
 </script>
 
 <style>
-  .cullendar-drop-day-is-active * {
+  .cullendar-day-dropzone {
+    position: absolute;
+    inset: 0;
     pointer-events: none;
+  }
+  .cullendar-is-dragging .cullendar-day-dropzone {
+    pointer-events: all;
   }
 </style>
