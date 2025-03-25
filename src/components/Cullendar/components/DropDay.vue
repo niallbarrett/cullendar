@@ -79,7 +79,7 @@ function toNewTimes(event) {
   const start = toDate(event.start, toUTC(props.date))
 
   return {
-    start,
+    start: start.toISOString(),
     end: addMinutes(start, duration).toISOString()
   }
 }
@@ -88,7 +88,7 @@ function toDate(date, utcDate) {
     year: utcDate.getFullYear(),
     month: utcDate.getMonth(),
     date: utcDate.getDate()
-  }).toISOString()
+  })
 }
 function toPayload(data, options = {}) {
   return {
