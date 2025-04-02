@@ -32,17 +32,17 @@ const props = defineProps({
 const dragClasses = computed(() => props.dragClass?.split?.(' ') || [])
 
 function onDragstart(e) {
-  document.querySelector('.cullendar').classList.add(constants.DRAGGING_CLASS)
-
   e.target.classList.add(...dragClasses.value)
 
   e.dataTransfer.effectAllowed = props.data.id ? 'move' : 'copy'
   e.dataTransfer.setData(constants.DATA_TRANSFER_TYPE, JSON.stringify(props.data))
+
+  setTimeout(() => { document.querySelector('.cullendar').classList.add(constants.DRAGGING_CLASS) }, 0)
 }
 function onDragend(e) {
-  document.querySelector('.cullendar').classList.remove(constants.DRAGGING_CLASS)
-
   e.target.classList.remove(...dragClasses.value)
+
+  document.querySelector('.cullendar').classList.remove(constants.DRAGGING_CLASS)
 }
 </script>
 
