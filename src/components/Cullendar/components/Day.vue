@@ -17,10 +17,6 @@ const props = defineProps({
   resource: {
     type: Object,
     required: true
-  },
-  events: {
-    type: Map,
-    required: true
   }
 })
 
