@@ -13,7 +13,7 @@ export default defineConfig({
       fileName: 'cullendar'
     },
     rollupOptions: {
-      external: ['vue', 'tailwindcss'],
+      external: ['vue'],
       output: { globals: { vue: 'Vue' } }
     }
   },
