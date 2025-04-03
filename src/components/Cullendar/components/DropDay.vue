@@ -109,5 +109,6 @@ function toPayload(data, options = {}) {
   }
   .cullendar-is-dragging .cullendar-day-dropzone {
     pointer-events: all;
+    z-index: 1;
   }
 </style>
