@@ -18,7 +18,7 @@ import { addMinutes, differenceInMinutes, set } from 'date-fns'
 import constants from '../api/Constants'
 // Utils
 import toArray from '../utils/ToArray'
-import toUTC from '../utils/date/ToUTC'
+import toUTCDate from '../utils/date/ToUtcDate'
 import toISODate from '../utils/date/ToIsoDate'
 
 const props = defineProps({
@@ -76,7 +76,7 @@ function onDrop(e) {
 }
 function toNewTimes(event) {
   const duration = differenceInMinutes(event.end, event.start)
-  const start = toDate(event.start, toUTC(props.date))
+  const start = toDate(event.start, toUTCDate(props.date))
 
   return {
     start: start.toISOString(),
