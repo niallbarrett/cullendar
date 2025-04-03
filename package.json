@@ -35,5 +35,8 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "tailwindcss": "^4.1.2",
     "vite": "^6.2.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
   }
 }
