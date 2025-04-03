@@ -2,7 +2,7 @@
 import { addWeeks, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns'
 import DEFAULTS from './Defaults'
 // Utils
-import toISODate from '../utils/date/ToIsoDate'
+import toISODateString from '../utils/date/ToIsoDateString'
 import toUTCDate from '../utils/date/ToUtcDate'
 
 export default function build(options = {}) {
@@ -15,7 +15,7 @@ export default function build(options = {}) {
   const dates = eachDayOfInterval({
     start,
     end
-  }).map(toISODate)
+  }).map(toISODateString)
 
   return {
     start: dates.at(0),

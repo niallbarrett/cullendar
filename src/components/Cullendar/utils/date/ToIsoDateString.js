@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
 
-export default function toISODate(date) {
+export default function toISODateString(date) {
   return format(date, 'yyyy-MM-dd')
 }

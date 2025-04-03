@@ -19,7 +19,7 @@ import constants from '../api/Constants'
 // Utils
 import toArray from '../utils/ToArray'
 import toUTCDate from '../utils/date/ToUtcDate'
-import toISODate from '../utils/date/ToIsoDate'
+import toISODateString from '../utils/date/ToIsoDateString'
 
 const props = defineProps({
   date: {
@@ -64,7 +64,7 @@ function onDrop(e) {
   if (!data.id)
     return callbacks.value.onAddEvent(toPayload(data))
 
-  if ((toISODate(utils.value.toTimezone(data.start)) === props.date) && toArray(data.resourceId).includes(props.resource.id))
+  if ((toISODateString(utils.value.toTimezone(data.start)) === props.date) && toArray(data.resourceId).includes(props.resource.id))
     return
 
   const times = toNewTimes(data)
