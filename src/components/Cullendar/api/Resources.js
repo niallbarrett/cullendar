@@ -1,21 +1,41 @@
-import toArray from '../utils/ToArray'
+// API
+import Constants from './Constants'
+// Utils
 import removeKeys from '../utils/object/RemoveKeys'
 
-const EXCLUDED_FIELDS = ['id', 'resources', 'nOrder', 'isGroup', 'maxEvents']
-
 export default function build(resources = [], eventMap = new Map()) {
-  const sortedGroups = sortByNOrder(resources)
+  const sorted = sortByNOrder(resources)
+  const result = []
 
-  // TODO: collapsing separate internal map, isOpen
-  return sortedGroups.flatMap(r => [r, ...sortByNOrder(toArray(r.resources))].map(r => toResource(r, eventMap.get(r.id))))
+  for (var i = 0; i < sorted.length; i++) {
+    const resource = sorted[i]
+    const parent = resource.resources ? toGroup(resource, eventMap) : toResource(resource, eventMap.get(resource.id))
+
+    result.push(parent)
+
+    if (parent.isGroup && parent.resources.length)
+      result.push(...parent.resources)
+  }
+
+  return result
+}
+
+function toGroup(val, eventMap) {
+  return {
+    id: val.id,
+    nOrder: val.nOrder,
+    isGroup: true,
+    resources: sortByNOrder(val.resources.map(v => toResource(v, eventMap.get(v.id)))),
+    data: removeKeys(val, Constants.EXCLUDED_RESOURCE_FIELDS)
+  }
 }
 
 function toResource(val, events = new Set()) {
   return {
     id: val.id,
-    isGroup: !!val.resources,
+    nOrder: val.nOrder,
     maxEvents: Math.max(...Array.from(events.values()).map(v => v.size), 1),
-    data: removeKeys(val, EXCLUDED_FIELDS)
+    data: removeKeys(val, Constants.EXCLUDED_RESOURCE_FIELDS)
   }
 }
 
