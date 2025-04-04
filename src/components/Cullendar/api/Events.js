@@ -1,24 +1,24 @@
 import toTimezoneDate from '../utils/date/ToTimezoneDate'
 import toISODateString from '../utils/date/ToIsoDateString'
 import toArray from '../utils/ToArray'
+import getOrSet from '../utils/map/GetOrSet'
 
 export default function build(events = [], timezone) {
-  return events.reduce((acc, event) => {
+  const resourceDateMap = new Map()
+
+  for (var i = 0; i < events.length; i++) {
+    const event = events[i]
     const date = toISODateString(toTimezoneDate(event.start, timezone))
     const resourceIds = toArray(event.resourceId)
 
-    resourceIds.forEach(resourceId => {
-      if (!acc.has(resourceId))
-        acc.set(resourceId, new Map())
+    for (var j = 0; j < resourceIds.length; j++) {
+      const resourceId = resourceIds[j]
+      const dateMap = getOrSet(resourceDateMap, resourceId, new Map())
+      const eventSet = getOrSet(dateMap, date, new Set())
 
-      const dateMap = acc.get(resourceId)
+      eventSet.add(event)
+    }
+  }
 
-      if (!dateMap.has(date))
-        dateMap.set(date, new Set())
-
-      dateMap.get(date).add(event)
-    })
-
-    return acc
-  }, new Map())
+  return resourceDateMap
 }
