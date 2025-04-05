@@ -1,21 +1,15 @@
 // Libraries
-import { addWeeks, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns'
+import { DateTime, Interval } from 'luxon'
+// API
 import DEFAULTS from './Defaults'
-// Utils
-import toISODateString from '../utils/date/ToIsoDateString'
-import toUTCDate from '../utils/date/ToUtcDate'
 
 export default function build(options = {}) {
-  const utcDate = toUTCDate(options.date)
   const nWeeks = Math.max(options.nWeeks || DEFAULTS.nWeeks, 1)
   const firstDayOfWeek = options.firstDayOfWeek ?? DEFAULTS.firstDayOfWeek
 
-  const start = startOfWeek(utcDate, { weekStartsOn: firstDayOfWeek })
-  const end = endOfWeek(addWeeks(start, nWeeks - 1), { weekStartsOn: firstDayOfWeek })
-  const dates = eachDayOfInterval({
-    start,
-    end
-  }).map(toISODateString)
+  const start = DateTime.fromISO(options.date).set({ weekday: firstDayOfWeek })
+  const end = start.plus({ weeks: nWeeks - 1 }).set({ weekday: firstDayOfWeek + 6 }).endOf('day')
+  const dates = Interval.fromDateTimes(start, end).splitBy({ day: 1 }).map(d => d.start.toISODate())
 
   return {
     start: dates.at(0),

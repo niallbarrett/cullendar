@@ -13,14 +13,11 @@
 <script setup>
 // Libraries
 import { ref, computed, toRefs } from 'vue'
-import { addMinutes, differenceInMinutes, set } from 'date-fns'
+import { DateTime, Interval } from 'luxon'
 // Config
 import constants from '../api/Constants'
 // Utils
 import toArray from '../utils/ToArray'
-import toTimezoneDate from '../utils/date/ToTimezoneDate'
-import toUTCDate from '../utils/date/ToUtcDate'
-import toISODateString from '../utils/date/ToIsoDateString'
 
 const props = defineProps({
   date: {
@@ -65,7 +62,9 @@ function onDrop(e) {
   if (!data.id)
     return callbacks.value.onAddEvent(toPayload(data))
 
-  if ((toISODateString(toTimezoneDate(data.start, view.value.timezone)) === props.date) && toArray(data.resourceId).includes(props.resource.id))
+  const originDate = DateTime.fromISO(data.start).setZone(view.value.timezone).toISODate()
+
+  if ((originDate === props.date) && toArray(data.resourceId).includes(props.resource.id))
     return
 
   const times = toNewTimes(data)
@@ -76,19 +75,24 @@ function onDrop(e) {
   callbacks.value.onMoveEvent(toPayload(data, { times }))
 }
 function toNewTimes(event) {
-  const duration = differenceInMinutes(event.end, event.start)
-  const start = toDate(event.start, toUTCDate(props.date))
+  const start = DateTime.fromISO(event.start).setZone(view.value.timezone)
+  const end = DateTime.fromISO(event.end).setZone(view.value.timezone)
+  const duration = Interval.fromDateTimes(start, end).length('minutes')
+
+  const newStart = toDay(start)
 
   return {
-    start: start.toISOString(),
-    end: addMinutes(start, duration).toISOString()
+    start: newStart.toISO(),
+    end: newStart.plus({ minutes: duration }).toISO()
   }
 }
-function toDate(date, utcDate) {
-  return set(toTimezoneDate(date, view.value.timezone), {
-    year: utcDate.getFullYear(),
-    month: utcDate.getMonth(),
-    date: utcDate.getDate()
+function toDay(date) {
+  const day = DateTime.fromISO(props.date)
+
+  return date.set({
+    year: day.year,
+    month: day.month,
+    day: day.day
   })
 }
 function toPayload(data, options = {}) {

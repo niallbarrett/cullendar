@@ -1,5 +1,6 @@
-import toTimezoneDate from '../utils/date/ToTimezoneDate'
-import toISODateString from '../utils/date/ToIsoDateString'
+// Libraries
+import { DateTime } from 'luxon'
+// Utils
 import toArray from '../utils/ToArray'
 import getOrSet from '../utils/map/GetOrSet'
 
@@ -8,7 +9,7 @@ export default function build(events = [], timezone) {
 
   for (var i = 0; i < events.length; i++) {
     const event = events[i]
-    const date = toISODateString(toTimezoneDate(event.start, timezone))
+    const date = DateTime.fromISO(event.start).setZone(timezone).toISODate()
     const resourceIds = toArray(event.resourceId)
 
     for (var j = 0; j < resourceIds.length; j++) {

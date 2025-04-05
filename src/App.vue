@@ -25,7 +25,7 @@
         </div>
       </template>
       <template #resourceGroup="{ resource }">
-        <div class="h-full px-2 flex items-center text-slate-500">
+        <div class="h-full px-2 flex items-center text-slate-500" @click="resource.isCollapsed ? resource.open() : resource.close()">
           <span class="truncate">{{ resource.data.label }}</span>
         </div>
       </template>
@@ -54,10 +54,8 @@
 <script setup>
 // Libraries
 import { ref, reactive } from 'vue'
+import { DateTime } from 'luxon'
 import create from '@/components/Cullendar/api'
-import { addMinutes, set } from 'date-fns'
-// Utils
-import toUTC from './components/Cullendar/utils/date/ToUTC'
 // Composables
 import useDemo from './Demo'
 // Components
@@ -65,8 +63,6 @@ import Cullendar from '@/components/Cullendar'
 import Event from './components/Event'
 import DropDay from './components/Cullendar/components/DropDay'
 import DragEvent from './components/Cullendar/components/DragEvent'
-import toTimezoneDate from './components/Cullendar/utils/date/ToTimezoneDate'
-
 
 const ZONES = ['Europe/Dublin', 'Asia/Shanghai', 'America/New_York', 'Antarctica/McMurdo', 'Asia/Kamchatka', 'Pacific/Pago_Pago', 'Asia/Kolkata']
 
@@ -80,12 +76,13 @@ const dayHeadSize = ref(40)
 
 const resources = ref([
   { id: '2', label: 'Order 3', resources: [{ id: '2-0', label: 'Child 1' }] },
-  { id: '0', label: 'Order 2', nOrder: 1, resources: [{ id: '0-0', label: 'Child 1' }] },
-  { id: '1', label: 'Order 1', nOrder: 0, resources: [{ id: '1-0', label: 'Child 2', nOrder: 1 }, { id: '1-1', label: 'Child 1', nOrder: 0 }] },
+  { id: '0', label: 'Order 2', nOrder: 2, resources: [{ id: '0-0', label: 'Child 1' }] },
+  { id: '1', label: 'Order 1', nOrder: 1, resources: [{ id: '1-0', label: 'Child 2', nOrder: 1 }, { id: '1-1', label: 'Child 1', nOrder: 0 }] },
+  { id: '3', label: 'Unassigned', nOrder: 0 }
 ])
 const events = ref([
-  { id: '0', resourceId: '0-0', start: '2025-03-12T01:00:00.000Z', end: '2025-03-12T02:00:00.000Z' },
-  { id: '1', resourceId: '0-0', start: '2025-03-12T23:00:00.000Z', end: '2025-03-13T06:00:00.000Z' }
+  { id: '0', resourceId: '3', start: '2025-03-12T00:00:00.000Z', end: '2025-03-12T01:00:00.000Z' },
+  { id: '1', resourceId: '0-0', start: '2025-03-12T23:00:00.000Z', end: '2025-03-13T01:00:00.000Z' }
 ])
 
 const options = reactive({
@@ -114,17 +111,17 @@ const { api: cullendar } = useDemo()
 cullendar.value = create(options)
 
 function onBeforeDropEvent(e) {
-  console.log(e)
+  console.log('on before drop event', e)
   return true
 }
 function onAddEvent(e) {
-  const start = setTime(toUTC(e.date), e.data.start, e.view.timezone)
-  const end = addMinutes(start, e.data.duration).toISOString()
+  const start = toDay(e.date, e.data.start, e.view.timezone)
+  const end = start.plus({ minutes: e.data.duration })
 
   const event = {
     id: events.value.length,
-    start,
-    end,
+    start: start.toISO(),
+    end: end.toISO(),
     resourceId: e.resource.id
   }
 
@@ -136,19 +133,17 @@ function onMoveEvent(e) {
   ev.start = e.times.start
   ev.end = e.times.end
   ev.resourceId = e.resource.id
-  console.log(e)
 }
-function setTime(date, time, timezone) {
+function toDay(day, time, timezone) {
+  const date = DateTime.fromISO(day)
   const [hours, minutes] = time.split(':')
 
-  return set(toTimezoneDate(date, timezone), {
-    year: date.getFullYear(),
-    month: date.getMonth(),
-    date: date.getDate(),
+  return DateTime.fromObject({
+    year: date.year,
+    month: date.month,
+    day: date.day,
     hours,
-    minutes,
-    seconds: 0,
-    milliseconds: 0
-  }).toISOString()
+    minutes
+  }, { zone: timezone })
 }
 </script>
