@@ -10,17 +10,15 @@
 </template>
 
 <script setup>
+// Libraries
+import { inject, toRefs } from 'vue'
 // Utils
 import toPx from './utils/format/ToPx'
 // Components
 import RowVirtualiser from './components/RowVirtualiser'
 
-defineProps({
-  layout: {
-    type: Object,
-    required: true
-  }
-})
+const api = inject('api')
+const { layout } = toRefs(api)
 
 function toStyle(row) {
   return {

@@ -4,7 +4,6 @@
       v-slot="{ resource }"
       ref="resourcesRef"
       :rows="resources"
-      :layout="layout"
       @scroll.passive="syncScroll('resources', $event)">
       <slot v-if="resource.isGroup" name="resourceGroup" v-bind="{ resource }"/>
       <slot v-else name="resource" v-bind="{ resource }"/>
@@ -13,7 +12,6 @@
       ref="timelineRef"
       :rows="resources"
       :columns="view.dates"
-      :layout="layout"
       @scroll.passive="syncScroll('timeline', $event)">
       <template #head="{ date }">
         <slot name="dayHead" v-bind="{ date }"/>
@@ -21,11 +19,10 @@
       <template #default="{ resource, date }">
         <Day
           v-if="!resource.isGroup"
-          v-slot="{ events, api }"
-          :api="cullendar"
+          v-slot="{ events }"
           :date="date"
           :resource="resource">
-          <slot name="day" v-bind="{ resource, date, events, api }">
+          <slot name="day" v-bind="{ resource, date, events }">
             <slot
               v-for="event in events"
               :key="event.id"
@@ -41,7 +38,7 @@
 
 <script setup>
 // Libraries
-import { ref, toRefs } from 'vue'
+import { ref, toRefs, provide } from 'vue'
 // Components
 import Timeline from './Timeline'
 import Resources from './Resources'
@@ -54,10 +51,12 @@ const props = defineProps({
   }
 })
 
+provide('api', props.cullendar)
+
 const resourcesRef = ref()
 const timelineRef = ref()
 
-const { layout, view, resources } = toRefs(props.cullendar)
+const { view, resources } = toRefs(props.cullendar)
 
 function syncScroll(source, e) {
   const target = source === 'resources' ? timelineRef : resourcesRef

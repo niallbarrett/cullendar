@@ -28,7 +28,7 @@
 
 <script setup>
 // Libraries
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, toRefs, watch, onMounted, inject } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 // Utils
 import toPx from './utils/format/ToPx'
@@ -39,15 +39,14 @@ const props = defineProps({
   columns: {
     type: Array,
     default: () => []
-  },
-  layout: {
-    type: Object,
-    required: true
   }
 })
 
+const api = inject('api')
+const { layout } = toRefs(api)
+
 const el = ref()
-const daySize = ref(props.layout.daySize)
+const daySize = ref(layout.value.daySize)
 
 const options = computed(() => ({
   horizontal: true,
@@ -63,7 +62,7 @@ const virtualColumns = computed(() => virtualizer.value.getVirtualItems())
 const totalSizeColumns = computed(() => virtualizer.value.getTotalSize())
 const wrapperStyle = computed(() => ({ width: toPx(totalSizeColumns.value) }))
 
-watch(() => props.layout.daySize, () => setDaySize())
+watch(() => layout.value.daySize, () => setDaySize())
 watch(totalSizeColumns, () => setDaySize())
 
 onMounted(() => {
@@ -72,12 +71,12 @@ onMounted(() => {
 })
 
 function setDaySize() {
-  daySize.value = Math.max(props.layout.daySize, Math.floor(el.value.clientWidth / props.columns.length))
+  daySize.value = Math.max(layout.value.daySize, Math.floor(el.value.clientWidth / props.columns.length))
   virtualizer.value.measure()
 }
 function toHeadStyle(col) {
   return {
-    height: toPx(props.layout.dayHeadSize),
+    height: toPx(layout.value.dayHeadSize),
     width: toPx(daySize.value),
     transform: `translateX(${toPx(col.start)}) translateY(0)`
   }

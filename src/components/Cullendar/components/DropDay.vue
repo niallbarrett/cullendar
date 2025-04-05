@@ -12,10 +12,10 @@
 
 <script setup>
 // Libraries
-import { ref, computed, toRefs } from 'vue'
+import { ref, computed, toRefs, inject } from 'vue'
 import { DateTime, Interval } from 'luxon'
-// Config
-import constants from '../api/Constants'
+// API
+import Constants from '../api/Constants'
 // Utils
 import toArray from '../utils/ToArray'
 
@@ -32,32 +32,29 @@ const props = defineProps({
     type: Array,
     required: true
   },
-  api: {
-    type: Object,
-    required: true
-  },
   dragoverClass: {
     type: String,
     default: ''
   }
 })
 
-const { view, callbacks } = toRefs(props.api)
+const api = inject('api')
+const { view, callbacks } = toRefs(api)
 const isDragOver = ref(false)
 
 const classes = computed(() => isDragOver.value ? { [props.dragoverClass]: true } : {})
 
 function onDragenter(e) {
-  if (e.dataTransfer.types.includes(constants.DATA_TRANSFER_TYPE))
+  if (e.dataTransfer.types.includes(Constants.DATA_TRANSFER_TYPE))
     isDragOver.value = true
 }
 function onDrop(e) {
-  if (!e.dataTransfer.types.includes(constants.DATA_TRANSFER_TYPE))
+  if (!e.dataTransfer.types.includes(Constants.DATA_TRANSFER_TYPE))
     return
 
   isDragOver.value = false
 
-  const data = JSON.parse(e.dataTransfer.getData(constants.DATA_TRANSFER_TYPE))
+  const data = JSON.parse(e.dataTransfer.getData(Constants.DATA_TRANSFER_TYPE))
 
   if (!data.id)
     return callbacks.value.onAddEvent(toPayload(data))
