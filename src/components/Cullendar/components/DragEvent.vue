@@ -48,6 +48,7 @@ function onDragend(e) {
 
 <style scoped>
   .cullendar-drag-event {
+    position: relative;
     user-select: none;
   }
 </style>
