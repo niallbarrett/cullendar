@@ -1,5 +1,5 @@
 // Libraries
-import { computed, reactive, unref, watch } from 'vue'
+import { ref, computed, reactive, unref, watch } from 'vue'
 // API
 import buildView from './View'
 import buildLayout from './Layout'
@@ -18,6 +18,8 @@ export default function create(options) {
   const callbacks = computed(() => buildCallbacks(options.callbacks))
   const utils = buildUtils(events, resources)
 
+  const resizeMap = ref(new Map())
+
   watch(view, () => callbacks.value.onView(view.value))
 
   const api = reactive({
@@ -26,7 +28,8 @@ export default function create(options) {
     events,
     resources,
     callbacks,
-    utils
+    utils,
+    resizeMap
   })
 
   return api

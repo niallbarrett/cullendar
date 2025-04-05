@@ -37,14 +37,16 @@
       </template>
       <template #day="slot">
         <DropDay
-          v-slot="{ events }"
+          v-slot="{ date, resource, events }"
           v-bind="slot"
           class="h-full flex flex-col justify-start"
           dragover-class="bg-red-500">
           <Event
             v-for="event in events"
             :key="event.id"
-            :event="event"/>
+            :event="event"
+            :resource="resource"
+            :date="date"/>
         </DropDay>
       </template>
     </Cullendar>
@@ -54,7 +56,7 @@
 <script setup>
 // Libraries
 import { ref, reactive } from 'vue'
-import { DateTime } from 'luxon'
+import { DateTime, Interval } from 'luxon'
 import create from '@/components/Cullendar/api'
 // Composables
 import useDemo from './Demo'
@@ -67,7 +69,7 @@ import DragEvent from './components/Cullendar/components/DragEvent'
 const ZONES = ['Europe/Dublin', 'Asia/Shanghai', 'America/New_York', 'Antarctica/McMurdo', 'Asia/Kamchatka', 'Pacific/Pago_Pago', 'Asia/Kolkata']
 
 const date = ref('2025-03-10')
-const nWeeks = ref(1)
+const nWeeks = ref(2)
 const firstDayOfWeek = ref(1)
 const timezone = ref(ZONES[0])
 
@@ -103,7 +105,8 @@ const options = reactive({
     onView: (e) => console.log('VIEW CHANGED', e),
     onBeforeDropEvent,
     onMoveEvent,
-    onAddEvent
+    onAddEvent,
+    onResizeEvent
   }
 })
 
@@ -134,16 +137,44 @@ function onMoveEvent(e) {
   ev.end = e.times.end
   ev.resourceId = e.resource.id
 }
+function onResizeEvent(e) {
+  const start = DateTime.fromISO(e.event.start).setZone(e.view.timezone)
+  const end = DateTime.fromISO(e.event.end).setZone(e.view.timezone)
+  const duration = Interval.fromDateTimes(start, end).length('minutes')
+
+  e.dates.forEach(date => {
+    const newStart = setDate(start, date)
+    const newEnd = newStart.plus({ minutes: duration })
+
+    const event = {
+      id: events.value.length,
+      start: newStart.toISO(),
+      end: newEnd.toISO(),
+      resourceId: e.resource.id
+    }
+
+    events.value.push(event)
+  })
+}
 function toDay(day, time, timezone) {
   const date = DateTime.fromISO(day)
-  const [hours, minutes] = time.split(':')
+  const [hour, minute] = time.split(':')
 
   return DateTime.fromObject({
     year: date.year,
     month: date.month,
     day: date.day,
-    hours,
-    minutes
+    hour,
+    minute
   }, { zone: timezone })
+}
+function setDate(date, day) {
+  const dayo = DateTime.fromISO(day).toUTC()
+
+  return date.set({
+    year: dayo.year,
+    month: dayo.month,
+    day: dayo.day
+  })
 }
 </script>

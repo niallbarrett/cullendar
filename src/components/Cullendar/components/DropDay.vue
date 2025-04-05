@@ -39,11 +39,24 @@ const props = defineProps({
 })
 
 const api = inject('api')
-const { view, callbacks } = toRefs(api)
+const { view, callbacks, resizeMap } = toRefs(api)
 const isDragOver = ref(false)
 
-const classes = computed(() => isDragOver.value ? { [props.dragoverClass]: true } : {})
+const classes = computed(() => ({
+  [props.dragoverClass]: isDragOver.value,
+  'bg-blue-500': isResize.value
+}))
 
+const isResize = computed(() => isTest())
+
+function isTest() {
+  const yo = resizeMap.value.get(props.resource.id)
+
+  if (!yo)
+    return
+
+  return yo.includes(props.date)
+}
 function onDragenter(e) {
   if (e.dataTransfer.types.includes(Constants.DATA_TRANSFER_TYPE))
     isDragOver.value = true
