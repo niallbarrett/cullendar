@@ -75,25 +75,21 @@ function onDrop(e) {
   callbacks.value.onMoveEvent(toPayload(data, { times }))
 }
 function toNewTimes(event) {
+  const day = DateTime.fromISO(props.date)
   const start = DateTime.fromISO(event.start).setZone(view.value.timezone)
   const end = DateTime.fromISO(event.end).setZone(view.value.timezone)
   const duration = Interval.fromDateTimes(start, end).length('minutes')
 
-  const newStart = toDay(start)
+  const newStart = start.set({
+    year: day.year,
+    month: day.month,
+    day: day.day
+  })
 
   return {
     start: newStart.toISO(),
     end: newStart.plus({ minutes: duration }).toISO()
   }
-}
-function toDay(date) {
-  const day = DateTime.fromISO(props.date)
-
-  return date.set({
-    year: day.year,
-    month: day.month,
-    day: day.day
-  })
 }
 function toPayload(data, options = {}) {
   return {
