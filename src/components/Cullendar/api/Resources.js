@@ -1,7 +1,11 @@
+// Libraries
+import { reactive } from 'vue'
 // API
 import Constants from './Constants'
 // Utils
 import removeKeys from '../utils/object/RemoveKeys'
+
+const collapsedSet = reactive(new Set())
 
 export default function build(resources = [], eventMap = new Map()) {
   const sorted = sortByNOrder(resources)
@@ -13,7 +17,7 @@ export default function build(resources = [], eventMap = new Map()) {
 
     result.push(parent)
 
-    if (parent.isGroup && parent.resources.length)
+    if (parent.isGroup && !parent.isCollapsed && parent.resources.length)
       result.push(...parent.resources)
   }
 
@@ -21,12 +25,17 @@ export default function build(resources = [], eventMap = new Map()) {
 }
 
 function toGroup(val, eventMap) {
+  const isCollapsed = collapsedSet.has(val.id)
+
   return {
     id: val.id,
     nOrder: val.nOrder,
     isGroup: true,
+    isCollapsed,
     resources: sortByNOrder(val.resources.map(v => toResource(v, eventMap.get(v.id)))),
-    data: removeKeys(val, Constants.EXCLUDED_RESOURCE_FIELDS)
+    data: removeKeys(val, Constants.EXCLUDED_RESOURCE_FIELDS),
+    open: () => collapsedSet.delete(val.id),
+    close: () => collapsedSet.add(val.id)
   }
 }
 
