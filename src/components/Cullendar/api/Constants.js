@@ -1,4 +1,4 @@
-const EXCLUDED_RESOURCE_FIELDS = ['id', 'nOrder', 'isGroup', 'resources', 'maxEvents']
+const EXCLUDED_RESOURCE_FIELDS = ['id', 'nOrder', 'isGroup', 'isCollapsed', 'resources', 'maxEvents']
 const DATA_TRANSFER_TYPE = 'cullendar-drag-event'
 const DRAGGING_CLASS = 'cullendar-is-dragging'
 
