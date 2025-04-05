@@ -1,10 +1,4 @@
-import toTimezoneDate from '../utils/date/ToTimezoneDate'
-
-export default function build(view, events) {
-  function toTimezone(date) {
-    return toTimezoneDate(date, view.value.timezone)
-  }
-
+export default function build(events, resources) {
   function getEvents(resourceId, date) {
     const resourceEvents = events.value.get(resourceId) || new Map()
     const forDate = date ? resourceEvents.get(date) : resourceEvents
@@ -12,8 +6,12 @@ export default function build(view, events) {
     return forDate || new Set()
   }
 
+  function getResource(id) {
+    return resources.value.get(id)
+  }
+
   return {
-    toTimezone,
+    getResource,
     getEvents
   }
 }

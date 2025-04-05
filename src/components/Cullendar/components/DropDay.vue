@@ -18,6 +18,7 @@ import { addMinutes, differenceInMinutes, set } from 'date-fns'
 import constants from '../api/Constants'
 // Utils
 import toArray from '../utils/ToArray'
+import toTimezoneDate from '../utils/date/ToTimezoneDate'
 import toUTCDate from '../utils/date/ToUtcDate'
 import toISODateString from '../utils/date/ToIsoDateString'
 
@@ -44,7 +45,7 @@ const props = defineProps({
   }
 })
 
-const { view, utils, callbacks } = toRefs(props.api)
+const { view, callbacks } = toRefs(props.api)
 const isDragOver = ref(false)
 
 const classes = computed(() => isDragOver.value ? { [props.dragoverClass]: true } : {})
@@ -64,7 +65,7 @@ function onDrop(e) {
   if (!data.id)
     return callbacks.value.onAddEvent(toPayload(data))
 
-  if ((toISODateString(utils.value.toTimezone(data.start)) === props.date) && toArray(data.resourceId).includes(props.resource.id))
+  if ((toISODateString(toTimezoneDate(data.start, view.value.timezone)) === props.date) && toArray(data.resourceId).includes(props.resource.id))
     return
 
   const times = toNewTimes(data)
@@ -84,7 +85,7 @@ function toNewTimes(event) {
   }
 }
 function toDate(date, utcDate) {
-  return set(utils.value.toTimezone(date), {
+  return set(toTimezoneDate(date, view.value.timezone), {
     year: utcDate.getFullYear(),
     month: utcDate.getMonth(),
     date: utcDate.getDate()
