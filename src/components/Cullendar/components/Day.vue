@@ -1,5 +1,5 @@
 <template>
-  <slot v-bind="{ api, events: chronological }"/>
+  <slot v-bind="{ events: chronological }"/>
 </template>
 
 <script setup>
