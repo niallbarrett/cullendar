@@ -4,7 +4,7 @@
     drag-class="opacity-50"
     class="ev max-h-12 min-w-0 p-1 flex-1 bg-white border border-black">
     <span class="text-xs">{{ label }}</span>
-    <Resize v-bind="props"/>
+    <ResizeHandle v-bind="props"/>
   </DragEvent>
 </template>
 
@@ -15,7 +15,7 @@ import { computed } from 'vue'
 import useDemo from '@/Demo'
 // Components
 import DragEvent from './Cullendar/components/DragEvent'
-import Resize from './Cullendar/components/Resize'
+import ResizeHandle from './Cullendar/components/ResizeHandle'
 
 const props = defineProps({
   event: {

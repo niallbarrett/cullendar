@@ -46,7 +46,7 @@ const api = inject('api')
 const { view, callbacks, resizeMap } = toRefs(api)
 
 const isDragOver = ref(false)
-const isResizeOver = computed(() => resizeMap.value.get(props.resource.id)?.includes(props.date) || false)
+const isResizeOver = computed(() => !!resizeMap.value.get(props.resource.id)?.includes(props.date))
 
 const classes = computed(() => ({
   [props.dragoverClass]: isDragOver.value,
