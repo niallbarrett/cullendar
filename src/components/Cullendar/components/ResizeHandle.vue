@@ -33,21 +33,18 @@ const { view, callbacks, resizeMap } = toRefs(api)
 let prevDelta = 0
 
 const x = ref(0)
+const daySize = ref(0)
 
 function onMousedown(e) {
   x.value = e.x
+  daySize.value = document.querySelector('.cullendar-timeline-virtual-col').clientWidth
 
   document.addEventListener('mousemove', onMousemove)
   document.addEventListener('mouseup', onMouseup)
   document.querySelector('.cullendar').classList.add(Constants.RESIZING_CLASS)
 }
 function onMouseup() {
-  callbacks.value.onResizeEvent({
-    event: props.event,
-    resource: props.resource,
-    dates: resizeMap.value.get(props.resource.id),
-    view: view.value
-  })
+  const dates = resizeMap.value.get(props.resource.id)
 
   resizeMap.value.clear()
   x.value = 0
@@ -55,11 +52,20 @@ function onMouseup() {
   document.removeEventListener('mousemove', onMousemove)
   document.removeEventListener('mouseup', onMouseup)
   document.querySelector('.cullendar').classList.remove(Constants.RESIZING_CLASS)
+
+  if (!dates.length)
+    return
+
+  callbacks.value.onResizeEvent({
+    event: props.event,
+    resource: props.resource,
+    dates,
+    view: view.value
+  })
 }
 function onMousemove(e) {
-  const DAY_WIDTH = 160 // TODO: Get this value
   const deltaX = Math.max(0, e.x - x.value)
-  const deltaDays = Math.ceil(deltaX / DAY_WIDTH)
+  const deltaDays = Math.ceil(deltaX / daySize.value)
 
   if (prevDelta === deltaDays)
     return
