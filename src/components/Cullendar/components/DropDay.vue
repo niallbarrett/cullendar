@@ -6,7 +6,7 @@
       @dragover.prevent
       @dragleave="isDragOver = false"
       @drop="onDrop"/>
-    <slot v-bind="{ date, resource, events, isDragOver }"/>
+    <slot v-bind="{ date, resource, events, isDragOver, isResizeOver }"/>
   </div>
 </template>
 
@@ -35,14 +35,23 @@ const props = defineProps({
   dragoverClass: {
     type: String,
     default: ''
+  },
+  resizeoverClass: {
+    type: String,
+    default: ''
   }
 })
 
 const api = inject('api')
-const { view, callbacks } = toRefs(api)
-const isDragOver = ref(false)
+const { view, callbacks, resizeMap } = toRefs(api)
 
-const classes = computed(() => isDragOver.value ? { [props.dragoverClass]: true } : {})
+const isDragOver = ref(false)
+const isResizeOver = computed(() => !!resizeMap.value.get(props.resource.id)?.includes(props.date))
+
+const classes = computed(() => ({
+  [props.dragoverClass]: isDragOver.value,
+  [props.resizeoverClass]: isResizeOver.value
+}))
 
 function onDragenter(e) {
   if (e.dataTransfer.types.includes(Constants.DATA_TRANSFER_TYPE))

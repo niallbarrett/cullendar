@@ -3,6 +3,7 @@ export default function build(options = {}) {
     onView: options.onView || (() => {}),
     onAddEvent: options.onAddEvent || (() => {}),
     onMoveEvent: options.onMoveEvent || (() => {}),
+    onResizeEvent: options.onResizeEvent || (() => {}),
     onBeforeDropEvent: options.onBeforeDropEvent || (() => true)
   }
 }
