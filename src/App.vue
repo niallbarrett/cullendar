@@ -69,7 +69,7 @@ import DragEvent from './components/Cullendar/components/DragEvent'
 
 const ZONES = ['Europe/Dublin', 'Asia/Shanghai', 'America/New_York', 'Antarctica/McMurdo', 'Asia/Kamchatka', 'Pacific/Pago_Pago', 'Asia/Kolkata']
 
-const date = ref('2025-03-10')
+const date = ref('2025-03-30')
 const nWeeks = ref(2)
 const firstDayOfWeek = ref(1)
 const timezone = ref(ZONES[0])
@@ -84,8 +84,8 @@ const resources = ref([
   { id: '3', label: 'Unassigned', nOrder: 0 }
 ])
 const events = ref([
-  { id: '0', resourceId: '3', start: '2025-03-12T00:00:00.000Z', end: '2025-03-12T01:00:00.000Z' },
-  { id: '1', resourceId: '0-0', start: '2025-03-12T23:00:00.000Z', end: '2025-03-13T01:00:00.000Z' }
+  { id: '0', resourceId: '3', start: '2025-03-30T00:00:00.000Z', end: '2025-03-30T01:00:00.000Z' },
+  { id: '1', resourceId: '0-0', start: '2025-03-30T23:00:00.000Z', end: '2025-03-31T01:00:00.000Z' }
 ])
 
 const options = reactive({
@@ -170,7 +170,7 @@ function toDay(day, time, timezone) {
   }, { zone: timezone })
 }
 function setDate(date, day) {
-  const dayo = DateTime.fromISO(day).toUTC()
+  const dayo = DateTime.fromISO(day)
 
   return date.set({
     year: dayo.year,
