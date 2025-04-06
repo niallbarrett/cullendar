@@ -73,4 +73,7 @@ defineOptions({ name: 'Cullendar' })
     display: flex;
     overflow: hidden;
   }
+  .cullendar-is-resizing {
+    cursor: ew-resize;
+  }
 </style>

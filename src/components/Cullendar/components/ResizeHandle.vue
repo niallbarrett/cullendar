@@ -7,7 +7,10 @@
 </template>
 
 <script setup>
+// Libraries
 import { ref, toRefs, inject } from 'vue'
+// API
+import Constants from '../api/Constants'
 
 const props = defineProps({
   event: {
@@ -36,6 +39,7 @@ function onMousedown(e) {
 
   document.addEventListener('mousemove', onMousemove)
   document.addEventListener('mouseup', onMouseup)
+  document.querySelector('.cullendar').classList.add(Constants.RESIZING_CLASS)
 }
 function onMouseup() {
   callbacks.value.onResizeEvent({
@@ -50,6 +54,7 @@ function onMouseup() {
 
   document.removeEventListener('mousemove', onMousemove)
   document.removeEventListener('mouseup', onMouseup)
+  document.querySelector('.cullendar').classList.remove(Constants.RESIZING_CLASS)
 }
 function onMousemove(e) {
   const DAY_WIDTH = 160 // TODO: Get this value
