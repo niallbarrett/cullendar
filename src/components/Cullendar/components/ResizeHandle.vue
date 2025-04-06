@@ -3,7 +3,9 @@
     draggable="true"
     class="cullendar-resize-handle"
     @dragstart.stop.prevent
-    @mousedown="onMousedown"/>
+    @mousedown="onMousedown">
+    <slot v-bind="{ isResizing }"/>
+  </div>
 </template>
 
 <script setup>
@@ -30,24 +32,38 @@ const props = defineProps({
 const api = inject('api')
 const { view, callbacks, resizeMap } = toRefs(api)
 
-let prevDelta = 0
+let prevDeltaDays = 0
 
-const x = ref(0)
+const startX = ref(0)
 const daySize = ref(0)
+const isResizing = ref(false)
 
 function onMousedown(e) {
-  x.value = e.x
+  isResizing.value = true
+  startX.value = e.x
   daySize.value = document.querySelector('.cullendar-timeline-virtual-col').clientWidth
 
   document.addEventListener('mousemove', onMousemove)
   document.addEventListener('mouseup', onMouseup)
   document.querySelector('.cullendar').classList.add(Constants.RESIZING_CLASS)
 }
+function onMousemove(e) {
+  const deltaX = Math.max(0, e.x - startX.value)
+  const deltaDays = Math.ceil(deltaX / daySize.value)
+
+  if (prevDeltaDays === deltaDays)
+    return
+
+  prevDeltaDays = deltaDays
+  resizeMap.value.set(props.resource.id, getDeltaDays(deltaDays))
+}
 function onMouseup() {
   const dates = resizeMap.value.get(props.resource.id)
 
+  prevDeltaDays = 0
+  isResizing.value = false
+  startX.value = 0
   resizeMap.value.clear()
-  x.value = 0
 
   document.removeEventListener('mousemove', onMousemove)
   document.removeEventListener('mouseup', onMouseup)
@@ -62,16 +78,6 @@ function onMouseup() {
     dates,
     view: view.value
   })
-}
-function onMousemove(e) {
-  const deltaX = Math.max(0, e.x - x.value)
-  const deltaDays = Math.ceil(deltaX / daySize.value)
-
-  if (prevDelta === deltaDays)
-    return
-
-  prevDelta = deltaDays
-  resizeMap.value.set(props.resource.id, getDeltaDays(deltaDays))
 }
 function getDeltaDays(delta) {
   const dates = view.value.dates
