@@ -27,8 +27,9 @@ const props = defineProps({
 const api = inject('api')
 const { view, callbacks, resizeMap } = toRefs(api)
 
+let prevDelta = 0
+
 const x = ref(0)
-const deltaDays = ref(0)
 
 function onMousedown(e) {
   x.value = e.x
@@ -44,7 +45,6 @@ function onMouseup() {
     view: view.value
   })
 
-  deltaDays.value = 0
   resizeMap.value.clear()
   x.value = 0
 
@@ -52,19 +52,21 @@ function onMouseup() {
   document.removeEventListener('mouseup', onMouseup)
 }
 function onMousemove(e) {
-  const DAY_WIDTH = 160
+  const DAY_WIDTH = 160 // TODO: Get this value
   const deltaX = Math.max(0, e.x - x.value)
+  const deltaDays = Math.ceil(deltaX / DAY_WIDTH)
 
-  deltaDays.value = Math.ceil(deltaX / DAY_WIDTH)
+  if (prevDelta === deltaDays)
+    return
 
-  const days = getDeltaDays()
-  resizeMap.value.set(props.resource.id, days) // TODO: Only set if changed
+  prevDelta = deltaDays
+  resizeMap.value.set(props.resource.id, getDeltaDays(deltaDays))
 }
-function getDeltaDays() {
+function getDeltaDays(delta) {
   const dates = view.value.dates
   const index = dates.indexOf(props.date) + 1
 
-  return dates.slice(index, index + deltaDays.value)
+  return dates.slice(index, index + delta)
 }
 </script>
 

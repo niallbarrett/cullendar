@@ -40,7 +40,8 @@
           v-slot="{ date, resource, events }"
           v-bind="slot"
           class="h-full flex flex-col justify-start"
-          dragover-class="bg-red-500">
+          dragover-class="bg-red-500"
+          resizeover-class="bg-purple-500">
           <Event
             v-for="event in events"
             :key="event.id"
