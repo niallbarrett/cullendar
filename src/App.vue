@@ -132,7 +132,7 @@ function onAddEvent(e) {
   events.value.push(event)
 }
 function onMoveEvent(e) {
-  const ev = events.value.find(event => event.id === e.data.id)
+  const ev = events.value.find(event => event.id === e.event.id)
 
   ev.start = e.times.start
   ev.end = e.times.end
