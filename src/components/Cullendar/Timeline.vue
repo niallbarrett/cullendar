@@ -43,15 +43,14 @@ const props = defineProps({
 })
 
 const api = inject('api')
-const { layout } = toRefs(api)
+const { elements, layout } = toRefs(api)
 
-const el = ref()
 const daySize = ref(layout.value.daySize)
 
 const options = computed(() => ({
   horizontal: true,
   count: props.columns.length,
-  getScrollElement: () => el.value,
+  getScrollElement: () => elements.value.timeline,
   estimateSize: () => daySize.value,
   overscan: 0
 }))
@@ -62,16 +61,14 @@ const virtualColumns = computed(() => virtualizer.value.getVirtualItems())
 const totalSizeColumns = computed(() => virtualizer.value.getTotalSize())
 const wrapperStyle = computed(() => ({ width: toPx(totalSizeColumns.value) }))
 
-watch(() => layout.value.daySize, () => setDaySize())
-watch(totalSizeColumns, () => setDaySize())
+watch(() => layout.value.daySize, () => setDaySize('watch day size'))
+watch(totalSizeColumns, () => setDaySize('total size'))
 
-onMounted(() => {
-  el.value = document.querySelector('.cullendar-timeline')
-  setDaySize()
-})
+onMounted(() => setDaySize('mounted'))
 
-function setDaySize() {
-  daySize.value = Math.max(layout.value.daySize, Math.floor(el.value.clientWidth / props.columns.length))
+function setDaySize(src) {
+  console.log(src, elements.value.timeline)
+  daySize.value = Math.max(layout.value.daySize, Math.floor(elements.value.timeline?.clientWidth / props.columns.length))
   virtualizer.value.measure()
 }
 function toHeadStyle(col) {

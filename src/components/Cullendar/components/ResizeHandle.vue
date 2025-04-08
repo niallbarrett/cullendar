@@ -30,7 +30,7 @@ const props = defineProps({
 })
 
 const api = inject('api')
-const { view, callbacks, resizeMap } = toRefs(api)
+const { elements, view, callbacks, resizeMap } = toRefs(api)
 
 let prevDeltaDays = 0
 
@@ -45,7 +45,7 @@ function onMousedown(e) {
 
   document.addEventListener('mousemove', onMousemove)
   document.addEventListener('mouseup', onMouseup)
-  document.querySelector('.cullendar').classList.add(Constants.RESIZING_CLASS)
+  elements.value.calendar.classList.add(Constants.RESIZING_CLASS)
 }
 function onMousemove(e) {
   const deltaX = Math.max(0, e.x - startX.value)
@@ -67,7 +67,7 @@ function onMouseup() {
 
   document.removeEventListener('mousemove', onMousemove)
   document.removeEventListener('mouseup', onMouseup)
-  document.querySelector('.cullendar').classList.remove(Constants.RESIZING_CLASS)
+  elements.value.calendar.classList.remove(Constants.RESIZING_CLASS)
 
   if (!dates.length)
     return
