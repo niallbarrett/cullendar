@@ -2,7 +2,7 @@
   "name": "cullendar",
   "description": "The completely headless, high-performance resource calendar built with Vue3.",
   "private": false,
-  "version": "0.0.12",
+  "version": "0.0.13",
   "repository": {
     "type": "git",
     "url": "https://github.com/niallbarrett/cullendar.git"
