@@ -53,7 +53,8 @@ const options = computed(() => ({
   count: props.columns.length,
   getScrollElement: () => el.value,
   estimateSize: () => daySize.value,
-  overscan: 0
+  gap: layout.value.gap,
+  overscan: layout.value.overscan
 }))
 
 const virtualizer = useVirtualizer(options)

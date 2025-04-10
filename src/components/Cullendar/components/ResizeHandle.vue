@@ -30,7 +30,7 @@ const props = defineProps({
 })
 
 const api = inject('api')
-const { view, callbacks, resizeMap } = toRefs(api)
+const { view, layout, callbacks, resizeMap } = toRefs(api)
 
 let prevDeltaDays = 0
 
@@ -49,7 +49,7 @@ function onMousedown(e) {
 }
 function onMousemove(e) {
   const deltaX = Math.max(0, e.x - startX.value)
-  const deltaDays = Math.ceil(deltaX / daySize.value)
+  const deltaDays = Math.ceil(deltaX / (daySize.value + layout.value.gap))
 
   if (prevDeltaDays === deltaDays)
     return

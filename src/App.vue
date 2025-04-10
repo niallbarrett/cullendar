@@ -100,6 +100,7 @@ const options = reactive({
   layout: {
     daySize,
     dayHeadSize,
+    gap: 5,
     resourcesClass: 'w-64'
   },
   callbacks: {
