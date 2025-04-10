@@ -31,9 +31,9 @@
 import { ref, computed, toRefs, watch, onMounted, inject } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 // Utils
-import toPx from './utils/format/ToPx'
+import toPx from '../utils/format/ToPx'
 // Components
-import RowVirtualiser from './components/RowVirtualiser'
+import RowVirtualiser from './RowVirtualiser'
 
 const props = defineProps({
   columns: {
@@ -72,7 +72,10 @@ onMounted(() => {
 })
 
 function setDaySize() {
-  daySize.value = Math.max(layout.value.daySize, Math.floor(el.value.clientWidth / props.columns.length))
+  const totalGap = layout.value.gap * (props.columns.length - 1)
+  const totalWidth = el.value.clientWidth - totalGap
+
+  daySize.value = Math.max(layout.value.daySize, Math.floor(totalWidth / props.columns.length))
   virtualizer.value.measure()
 }
 function toHeadStyle(col) {

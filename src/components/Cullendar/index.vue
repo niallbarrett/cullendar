@@ -40,8 +40,8 @@
 // Libraries
 import { ref, computed, toRefs, provide } from 'vue'
 // Components
-import Timeline from './Timeline'
-import Resources from './Resources'
+import Timeline from './components/Timeline'
+import Resources from './components/Resources'
 import Day from './components/Day'
 
 const props = defineProps({
