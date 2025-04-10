@@ -53,6 +53,8 @@ const props = defineProps({
 
 provide('api', props.cullendar)
 
+let scrollSource = null
+
 const resourcesRef = ref()
 const timelineRef = ref()
 
@@ -61,9 +63,15 @@ const { view, resources } = toRefs(props.cullendar)
 const rows = computed(() => Array.from(resources.value.values()))
 
 function syncScroll(source, e) {
+  if (scrollSource && scrollSource !== source)
+    return
+
   const target = source === 'resources' ? timelineRef : resourcesRef
+  scrollSource = source
 
   target.value.$el.scrollTop = e.target.scrollTop
+
+  requestAnimationFrame(() => scrollSource = null)
 }
 
 defineOptions({ name: 'Cullendar' })
