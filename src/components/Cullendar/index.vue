@@ -1,5 +1,5 @@
 <template>
-  <div class="cullendar">
+  <div class="cullendar" :style="{'--scrollbar-width': getScrollbarWidth() }">
     <Resources
       v-slot="{ resource }"
       ref="resourcesRef"
@@ -39,6 +39,8 @@
 <script setup>
 // Libraries
 import { ref, computed, toRefs, provide } from 'vue'
+// Utils
+import getScrollbarWidth from './utils/GetScrollbarWidth'
 // Components
 import Timeline from './components/Timeline'
 import Resources from './components/Resources'
@@ -53,7 +55,7 @@ const props = defineProps({
 
 provide('api', props.cullendar)
 
-let scrollSource = null
+let frame = null
 
 const resourcesRef = ref()
 const timelineRef = ref()
@@ -63,15 +65,15 @@ const { view, resources } = toRefs(props.cullendar)
 const rows = computed(() => Array.from(resources.value.values()))
 
 function syncScroll(source, e) {
-  if (scrollSource && scrollSource !== source)
-    return
+  if (frame)
+    cancelAnimationFrame(frame)
 
-  const target = source === 'resources' ? timelineRef : resourcesRef
-  scrollSource = source
+  frame = requestAnimationFrame(() => {
+    frame = null
 
-  target.value.$el.scrollTop = e.target.scrollTop
-
-  requestAnimationFrame(() => scrollSource = null)
+    const target = source === 'resources' ? timelineRef : resourcesRef
+    target.value.$el.scrollTop = e.target.scrollTop
+  })
 }
 
 defineOptions({ name: 'Cullendar' })

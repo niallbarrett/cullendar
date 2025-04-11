@@ -30,6 +30,7 @@ function toStyle(row) {
 
 <style scoped>
   .cullendar-resources {
+    margin-bottom: var(--scrollbar-width);
     overflow: scroll auto;
     scrollbar-width: none;
   }
