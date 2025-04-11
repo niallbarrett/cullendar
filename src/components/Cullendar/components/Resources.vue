@@ -13,9 +13,9 @@
 // Libraries
 import { inject, toRefs } from 'vue'
 // Utils
-import toPx from './utils/format/ToPx'
+import toPx from '../utils/format/ToPx'
 // Components
-import RowVirtualiser from './components/RowVirtualiser'
+import RowVirtualiser from './RowVirtualiser'
 
 const api = inject('api')
 const { layout } = toRefs(api)

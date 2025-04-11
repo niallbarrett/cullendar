@@ -31,9 +31,9 @@
 import { ref, computed, toRefs, watch, onMounted, inject } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 // Utils
-import toPx from './utils/format/ToPx'
+import toPx from '../utils/format/ToPx'
 // Components
-import RowVirtualiser from './components/RowVirtualiser'
+import RowVirtualiser from './RowVirtualiser'
 
 const props = defineProps({
   columns: {
@@ -52,7 +52,8 @@ const options = computed(() => ({
   count: props.columns.length,
   getScrollElement: () => elements.value.timeline,
   estimateSize: () => daySize.value,
-  overscan: 0
+  gap: layout.value.gap,
+  overscan: layout.value.overscan
 }))
 
 const virtualizer = useVirtualizer(options)
@@ -66,9 +67,11 @@ watch(totalSizeColumns, () => setDaySize('total size'))
 
 onMounted(() => setDaySize('mounted'))
 
-function setDaySize(src) {
-  console.log(src, elements.value.timeline)
-  daySize.value = Math.max(layout.value.daySize, Math.floor(elements.value.timeline?.clientWidth / props.columns.length))
+function setDaySize() {
+  const totalGap = layout.value.gap * (props.columns.length - 1)
+  const totalWidth = el.value.clientWidth - totalGap
+
+  daySize.value = Math.max(layout.value.daySize, Math.floor(totalWidth / props.columns.length))
   virtualizer.value.measure()
 }
 function toHeadStyle(col) {

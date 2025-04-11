@@ -66,7 +66,7 @@ function onDrop(e) {
   const data = JSON.parse(e.dataTransfer.getData(Constants.DATA_TRANSFER_TYPE))
 
   if (!data.id)
-    return callbacks.value.onAddEvent(toPayload(data))
+    return callbacks.value.onAddEvent(toPayload({ data }))
 
   const originDate = DateTime.fromISO(data.start).setZone(view.value.timezone).toISODate()
 
@@ -74,11 +74,12 @@ function onDrop(e) {
     return
 
   const times = toNewTimes(data)
+  const payload = toPayload({ event: data, times })
 
-  if (!callbacks.value.onBeforeDropEvent(toPayload(data, { times })))
+  if (!callbacks.value.onBeforeDropEvent(payload))
     return
 
-  callbacks.value.onMoveEvent(toPayload(data, { times }))
+  callbacks.value.onMoveEvent(payload)
 }
 function toNewTimes(event) {
   const day = DateTime.fromISO(props.date)
@@ -97,10 +98,9 @@ function toNewTimes(event) {
     end: newStart.plus({ minutes: duration }).toISO()
   }
 }
-function toPayload(data, options = {}) {
+function toPayload(options = {}) {
   return {
     ...options,
-    data,
     date: props.date,
     resource: props.resource,
     view: view.value

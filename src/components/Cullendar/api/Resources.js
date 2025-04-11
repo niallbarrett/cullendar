@@ -9,19 +9,23 @@ const collapsedSet = reactive(new Set())
 
 export default function build(resources = [], eventMap = new Map()) {
   const sorted = sortByNOrder(resources)
-  const result = []
+  const resourceMap = new Map()
 
   for (var i = 0; i < sorted.length; i++) {
     const resource = sorted[i]
     const parent = resource.resources ? toGroup(resource, eventMap) : toResource(resource, eventMap.get(resource.id))
 
-    result.push(parent)
+    resourceMap.set(parent.id, parent)
 
-    if (parent.isGroup && !parent.isCollapsed && parent.resources.length)
-      result.push(...parent.resources)
+    if (parent.isGroup && !parent.isCollapsed && parent.resources.length) {
+      for (var j = 0; j < parent.resources.length; j++) {
+        const child = parent.resources[j]
+        resourceMap.set(child.id, child)
+      }
+    }
   }
 
-  return result
+  return resourceMap
 }
 
 function toGroup(val, eventMap) {

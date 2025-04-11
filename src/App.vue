@@ -30,7 +30,7 @@
         </div>
       </template>
       <template #resource="{ resource }">
-        <div class="h-full px-2 flex items-center gap-1">
+        <div class="h-full px-2 flex items-center gap-1" @click="onTest(resource)">
           <span class="size-6 rounded-full bg-slate-100"/>
           <span class="truncate">{{ resource.data.label }}</span>
         </div>
@@ -100,6 +100,7 @@ const options = reactive({
   layout: {
     daySize,
     dayHeadSize,
+    gap: 5,
     resourcesClass: 'w-64'
   },
   callbacks: {
@@ -132,7 +133,7 @@ function onAddEvent(e) {
   events.value.push(event)
 }
 function onMoveEvent(e) {
-  const ev = events.value.find(event => event.id === e.data.id)
+  const ev = events.value.find(event => event.id === e.event.id)
 
   ev.start = e.times.start
   ev.end = e.times.end
@@ -177,5 +178,11 @@ function setDate(date, day) {
     month: dayo.month,
     day: dayo.day
   })
+}
+function onTest(resource) {
+  const yo = cullendar.value.utils.getEvents(resource.id)
+  const jo = cullendar.value.utils.getResource(resource.id)
+
+  console.log(yo, jo)
 }
 </script>

@@ -3,14 +3,14 @@
     <Resources
       v-slot="{ resource }"
       ref="resourcesRef"
-      :rows="resources"
+      :rows="rows"
       @scroll.passive="syncScroll('resources', $event)">
       <slot v-if="resource.isGroup" name="resourceGroup" v-bind="{ resource }"/>
       <slot v-else name="resource" v-bind="{ resource }"/>
     </Resources>
     <Timeline
       ref="timelineRef"
-      :rows="resources"
+      :rows="rows"
       :columns="view.dates"
       @scroll.passive="syncScroll('timeline', $event)">
       <template #head="{ date }">
@@ -38,10 +38,10 @@
 
 <script setup>
 // Libraries
-import { ref, toRefs, provide } from 'vue'
+import { ref, computed, toRefs, provide } from 'vue'
 // Components
-import Timeline from './Timeline'
-import Resources from './Resources'
+import Timeline from './components/Timeline'
+import Resources from './components/Resources'
 import Day from './components/Day'
 
 const props = defineProps({
@@ -53,15 +53,25 @@ const props = defineProps({
 
 provide('api', props.cullendar)
 
+let scrollSource = null
+
 const resourcesRef = ref()
 const timelineRef = ref()
 
 const { view, resources } = toRefs(props.cullendar)
 
+const rows = computed(() => Array.from(resources.value.values()))
+
 function syncScroll(source, e) {
+  if (scrollSource && scrollSource !== source)
+    return
+
   const target = source === 'resources' ? timelineRef : resourcesRef
+  scrollSource = source
 
   target.value.$el.scrollTop = e.target.scrollTop
+
+  requestAnimationFrame(() => scrollSource = null)
 }
 
 defineOptions({ name: 'Cullendar' })

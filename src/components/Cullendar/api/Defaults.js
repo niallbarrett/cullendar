@@ -5,5 +5,7 @@ export default {
   daySize: 160,
   dayHeadSize: 32,
   eventSize: 48,
-  resourceGroupSize: 24
+  resourceGroupSize: 24,
+  gap: 0,
+  overscan: 0
 }
