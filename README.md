@@ -7,9 +7,9 @@ _"When you think calendar, think different, think Cullendar..."_
 ### ⚡ Features
 
 - 💨 Fully virtualised — ultra-fast performance, even with thousands of events
-- 🧩 Headless — bring your own design; no styles or opinions included
+- 🧩 Completely Headless — bring your own design; no styles or opinions included
 - 🧠 Extensible API — hook into lifecycle callbacks like onAddEvent, onResizeEvent, and more
-- 🌍 Timezone aware — display events in a specific timezone
+- 🌍 Timezone aware — display events in a specific timezone using Temporal
 - 🤏 Drag/Drop support — intuitive event interaction
 - ↔️ Resizable events — drag to extend or shorten event durations seamlessly
 - 🔄 Super reactive — updates instantly when your data changes
