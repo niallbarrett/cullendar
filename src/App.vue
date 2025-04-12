@@ -18,7 +18,7 @@
     </div>
     <Cullendar
       :cullendar="cullendar"
-      class="flex-1 bg-white border border-black text-sm">
+      class="gap-x-2 flex-1 bg-white border border-black text-sm">
       <template #dayHead="{ date }">
         <div class="h-full px-2 flex items-center bg-white text-slate-500">
           <span class="truncate">{{ date }}</span>
@@ -57,7 +57,7 @@
 <script setup>
 // Libraries
 import { ref, reactive } from 'vue'
-import { DateTime, Interval } from 'luxon'
+// import { DateTime, Interval } from 'luxon'
 import create from '@/components/Cullendar/api'
 // Composables
 import useDemo from './Demo'
@@ -69,8 +69,8 @@ import DragEvent from './components/Cullendar/components/DragEvent'
 
 const ZONES = ['Europe/Dublin', 'Asia/Shanghai', 'America/New_York', 'Antarctica/McMurdo', 'Asia/Kamchatka', 'Pacific/Pago_Pago', 'Asia/Kolkata']
 
-const date = ref('2025-03-30')
-const nWeeks = ref(2)
+const date = ref('2025-04-11')
+const nWeeks = ref(1)
 const firstDayOfWeek = ref(1)
 const timezone = ref(ZONES[0])
 
@@ -84,8 +84,8 @@ const resources = ref([
   { id: '3', label: 'Unassigned', nOrder: 0 }
 ])
 const events = ref([
-  { id: '0', resourceId: '3', start: '2025-03-30T00:00:00.000Z', end: '2025-03-30T01:00:00.000Z' },
-  { id: '1', resourceId: '0-0', start: '2025-03-30T23:00:00.000Z', end: '2025-03-31T01:00:00.000Z' }
+  { id: '0', resourceId: '3', start: '2025-04-07T00:00:00.000Z', end: '2025-04-07T01:00:00.000Z' },
+  { id: '1', resourceId: '0-0', start: '2025-04-07T22:00:00.000Z', end: '2025-04-08T00:00:00.000Z' }
 ])
 
 const options = reactive({
@@ -120,17 +120,18 @@ function onBeforeDropEvent(e) {
   return true
 }
 function onAddEvent(e) {
-  const start = toDay(e.date, e.data.start, e.view.timezone)
-  const end = start.plus({ minutes: e.data.duration })
+  console.log(e)
+  // const start = toDay(e.date, e.data.start, e.view.timezone)
+  // const end = start.plus({ minutes: e.data.duration })
 
-  const event = {
-    id: events.value.length,
-    start: start.toISO(),
-    end: end.toISO(),
-    resourceId: e.resource.id
-  }
+  // const event = {
+  //   id: events.value.length,
+  //   start: start.toISO(),
+  //   end: end.toISO(),
+  //   resourceId: e.resource.id
+  // }
 
-  events.value.push(event)
+  // events.value.push(event)
 }
 function onMoveEvent(e) {
   const ev = events.value.find(event => event.id === e.event.id)
@@ -140,45 +141,46 @@ function onMoveEvent(e) {
   ev.resourceId = e.resource.id
 }
 function onResizeEvent(e) {
-  const start = DateTime.fromISO(e.event.start).setZone(e.view.timezone)
-  const end = DateTime.fromISO(e.event.end).setZone(e.view.timezone)
-  const duration = Interval.fromDateTimes(start, end).length('minutes')
+  console.log(e)
+  // const start = DateTime.fromISO(e.event.start).setZone(e.view.timezone)
+  // const end = DateTime.fromISO(e.event.end).setZone(e.view.timezone)
+  // const duration = Interval.fromDateTimes(start, end).length('minutes')
 
-  e.dates.forEach(date => {
-    const newStart = setDate(start, date)
-    const newEnd = newStart.plus({ minutes: duration })
+  // e.dates.forEach(date => {
+  //   const newStart = setDate(start, date)
+  //   const newEnd = newStart.plus({ minutes: duration })
 
-    const event = {
-      id: events.value.length,
-      start: newStart.toISO(),
-      end: newEnd.toISO(),
-      resourceId: e.resource.id
-    }
+  //   const event = {
+  //     id: events.value.length,
+  //     start: newStart.toISO(),
+  //     end: newEnd.toISO(),
+  //     resourceId: e.resource.id
+  //   }
 
-    events.value.push(event)
-  })
+  //   events.value.push(event)
+  // })
 }
-function toDay(day, time, timezone) {
-  const date = DateTime.fromISO(day)
-  const [hour, minute] = time.split(':')
+// function toDay(day, time, timezone) {
+//   const date = DateTime.fromISO(day)
+//   const [hour, minute] = time.split(':')
 
-  return DateTime.fromObject({
-    year: date.year,
-    month: date.month,
-    day: date.day,
-    hour,
-    minute
-  }, { zone: timezone })
-}
-function setDate(date, day) {
-  const dayo = DateTime.fromISO(day)
+//   return DateTime.fromObject({
+//     year: date.year,
+//     month: date.month,
+//     day: date.day,
+//     hour,
+//     minute
+//   }, { zone: timezone })
+// }
+// function setDate(date, day) {
+//   const dayo = DateTime.fromISO(day)
 
-  return date.set({
-    year: dayo.year,
-    month: dayo.month,
-    day: dayo.day
-  })
-}
+//   return date.set({
+//     year: dayo.year,
+//     month: dayo.month,
+//     day: dayo.day
+//   })
+// }
 function onTest(resource) {
   const yo = cullendar.value.utils.getEvents(resource.id)
   const jo = cullendar.value.utils.getResource(resource.id)

@@ -1,5 +1,5 @@
 // Libraries
-import { DateTime, Interval } from 'luxon'
+import { Temporal } from 'temporal-polyfill'
 // API
 import DEFAULTS from './Defaults'
 
@@ -7,9 +7,9 @@ export default function build(options = {}) {
   const nWeeks = Math.max(options.nWeeks || DEFAULTS.nWeeks, 1)
   const firstDayOfWeek = options.firstDayOfWeek ?? DEFAULTS.firstDayOfWeek
 
-  const start = DateTime.fromISO(options.date).set({ weekday: firstDayOfWeek })
-  const end = start.plus({ weeks: nWeeks - 1 }).set({ weekday: firstDayOfWeek + 6 }).endOf('day')
-  const dates = Interval.fromDateTimes(start, end).splitBy({ day: 1 }).map(d => d.start.toISODate())
+  const date = Temporal.PlainDate.from(options.date)
+  const start = date.add({ days: (firstDayOfWeek - date.dayOfWeek) % 7 })
+  const dates = Array.from({ length: nWeeks * 7 }).map((_v, i) => start.add({ days: i }).toString())
 
   return {
     start: dates.at(0),
