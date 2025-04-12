@@ -57,7 +57,7 @@
 <script setup>
 // Libraries
 import { ref, reactive } from 'vue'
-// import { DateTime, Interval } from 'luxon'
+import { Temporal } from 'temporal-polyfill'
 import create from '@/components/Cullendar/api'
 // Composables
 import useDemo from './Demo'
@@ -120,18 +120,18 @@ function onBeforeDropEvent(e) {
   return true
 }
 function onAddEvent(e) {
-  console.log(e)
-  // const start = toDay(e.date, e.data.start, e.view.timezone)
-  // const end = start.plus({ minutes: e.data.duration })
+  const day = Temporal.PlainDate.from(e.date)
+  const start = toDay(day, e.data.start, e.view.timezone)
+  const end = start.add({ minutes: e.data.duration })
 
-  // const event = {
-  //   id: events.value.length,
-  //   start: start.toISO(),
-  //   end: end.toISO(),
-  //   resourceId: e.resource.id
-  // }
+  const event = {
+    id: events.value.length,
+    start: start.toString({ timeZoneName: 'never' }),
+    end: end.toString({ timeZoneName: 'never' }),
+    resourceId: e.resource.id
+  }
 
-  // events.value.push(event)
+  events.value.push(event)
 }
 function onMoveEvent(e) {
   const ev = events.value.find(event => event.id === e.event.id)
@@ -141,46 +141,45 @@ function onMoveEvent(e) {
   ev.resourceId = e.resource.id
 }
 function onResizeEvent(e) {
-  console.log(e)
-  // const start = DateTime.fromISO(e.event.start).setZone(e.view.timezone)
-  // const end = DateTime.fromISO(e.event.end).setZone(e.view.timezone)
-  // const duration = Interval.fromDateTimes(start, end).length('minutes')
+  const start = Temporal.Instant.from(e.event.start).toZonedDateTimeISO(e.view.timezone)
+  const end = Temporal.Instant.from(e.event.end).toZonedDateTimeISO(e.view.timezone)
+  const duration = start.until(end)
 
-  // e.dates.forEach(date => {
-  //   const newStart = setDate(start, date)
-  //   const newEnd = newStart.plus({ minutes: duration })
+  e.dates.forEach(date => {
+    const newStart = setDate(start, date)
+    const newEnd = newStart.add(duration)
 
-  //   const event = {
-  //     id: events.value.length,
-  //     start: newStart.toISO(),
-  //     end: newEnd.toISO(),
-  //     resourceId: e.resource.id
-  //   }
+    const event = {
+      id: events.value.length,
+      start: newStart.toString({ timeZoneName: 'never' }),
+      end: newEnd.toString({ timeZoneName: 'never' }),
+      resourceId: e.resource.id
+    }
 
-  //   events.value.push(event)
-  // })
+    events.value.push(event)
+  })
 }
-// function toDay(day, time, timezone) {
-//   const date = DateTime.fromISO(day)
-//   const [hour, minute] = time.split(':')
+function toDay(day, time, timeZone) {
+  const [hour, minute] = time.split(':')
 
-//   return DateTime.fromObject({
-//     year: date.year,
-//     month: date.month,
-//     day: date.day,
-//     hour,
-//     minute
-//   }, { zone: timezone })
-// }
-// function setDate(date, day) {
-//   const dayo = DateTime.fromISO(day)
+  return Temporal.ZonedDateTime.from({
+    year: day.year,
+    month: day.month,
+    day: day.day,
+    hour,
+    minute,
+    timeZone
+  })
+}
+function setDate(date, day) {
+  const plainDate = Temporal.PlainDate.from(day)
 
-//   return date.set({
-//     year: dayo.year,
-//     month: dayo.month,
-//     day: dayo.day
-//   })
-// }
+  return date.with({
+    year: plainDate.year,
+    month: plainDate.month,
+    day: plainDate.day
+  })
+}
 function onTest(resource) {
   const yo = cullendar.value.utils.getEvents(resource.id)
   const jo = cullendar.value.utils.getResource(resource.id)
