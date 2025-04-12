@@ -1,5 +1,5 @@
 // Libraries
-import { DateTime } from 'luxon'
+import { Temporal } from 'temporal-polyfill'
 // Utils
 import toArray from '../utils/ToArray'
 import getOrSet from '../utils/map/GetOrSet'
@@ -9,7 +9,7 @@ export default function build(events = [], timezone) {
 
   for (var i = 0; i < events.length; i++) {
     const event = events[i]
-    const date = DateTime.fromISO(event.start).setZone(timezone).toISODate()
+    const date = Temporal.Instant.from(event.start).toZonedDateTimeISO(timezone).toPlainDate().toString()
     const resourceIds = toArray(event.resourceId)
 
     for (var j = 0; j < resourceIds.length; j++) {

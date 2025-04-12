@@ -13,7 +13,7 @@
 <script setup>
 // Libraries
 import { ref, computed, toRefs, inject } from 'vue'
-import { DateTime, Interval } from 'luxon'
+import { Temporal } from 'temporal-polyfill'
 // API
 import Constants from '../api/Constants'
 // Utils
@@ -68,7 +68,7 @@ function onDrop(e) {
   if (!data.id)
     return callbacks.value.onAddEvent(toPayload({ data }))
 
-  const originDate = DateTime.fromISO(data.start).setZone(view.value.timezone).toISODate()
+  const originDate = Temporal.Instant.from(data.start).toZonedDateTimeISO(view.value.timezone).toPlainDate().toString()
 
   if ((originDate === props.date) && toArray(data.resourceId).includes(props.resource.id))
     return
@@ -82,20 +82,20 @@ function onDrop(e) {
   callbacks.value.onMoveEvent(payload)
 }
 function toNewTimes(event) {
-  const day = DateTime.fromISO(props.date)
-  const start = DateTime.fromISO(event.start).setZone(view.value.timezone)
-  const end = DateTime.fromISO(event.end).setZone(view.value.timezone)
-  const duration = Interval.fromDateTimes(start, end).length('minutes')
+  const day = Temporal.PlainDate.from(props.date)
+  const start = Temporal.Instant.from(event.start).toZonedDateTimeISO(view.value.timezone)
+  const end = Temporal.Instant.from(event.end).toZonedDateTimeISO(view.value.timezone)
+  const duration = start.until(end)
 
-  const newStart = start.set({
+  const newStart = start.with({
     year: day.year,
     month: day.month,
     day: day.day
   })
 
   return {
-    start: newStart.toISO(),
-    end: newStart.plus({ minutes: duration }).toISO()
+    start: newStart.toString({ timeZoneName: 'never' }),
+    end: newStart.add(duration).toString({ timeZoneName: 'never' })
   }
 }
 function toPayload(options = {}) {
