@@ -28,7 +28,7 @@
 
 <script setup>
 // Libraries
-import { ref, computed, toRefs, watch, onMounted, inject } from 'vue'
+import { ref, computed, toRefs, watch, onMounted, onUnmounted, inject } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 // Utils
 import toPx from '../utils/format/ToPx'
@@ -45,6 +45,7 @@ const props = defineProps({
 const api = inject('api')
 const { layout } = toRefs(api)
 
+let observer
 const el = ref()
 const daySize = ref(layout.value.daySize)
 
@@ -63,18 +64,26 @@ const virtualColumns = computed(() => virtualizer.value.getVirtualItems())
 const totalSizeColumns = computed(() => virtualizer.value.getTotalSize())
 const wrapperStyle = computed(() => ({ width: toPx(totalSizeColumns.value) }))
 
-watch([() => props.columns, () => layout.value.daySize], () => setDaySize())
+watch([() => props.columns, () => layout.value.daySize], () => updateDaySize())
 
 onMounted(() => {
   el.value = document.querySelector('.cullendar-timeline')
-  setDaySize()
+  observer = new ResizeObserver(([entry]) => entry && updateDaySize(entry.contentRect.width))
+
+  observer.observe(el.value)
 })
+onUnmounted(() => observer.unobserve(el.value))
 
-function setDaySize() {
+function updateDaySize(rectWidth) {
+  const clientWidth = rectWidth ?? el.value.clientWidth
   const totalGap = layout.value.gap * (props.columns.length - 1)
-  const totalWidth = el.value.clientWidth - totalGap
+  const totalWidth = clientWidth - totalGap
+  const newDaySize = Math.max(layout.value.daySize, Math.floor(totalWidth / props.columns.length))
 
-  daySize.value = Math.max(layout.value.daySize, Math.floor(totalWidth / props.columns.length))
+  if (newDaySize === daySize.value)
+    return
+
+  daySize.value = newDaySize
   virtualizer.value.measure()
 }
 function toHeadStyle(col) {
