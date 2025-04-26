@@ -1,6 +1,7 @@
 <template>
   <div :class="classes">
     <span
+      v-if="droppable && resource.isEventDroppable"
       class="cullendar-day-dropzone"
       @dragenter="onDragenter"
       @dragover.prevent
@@ -31,6 +32,10 @@ const props = defineProps({
   events: {
     type: Array,
     required: true
+  },
+  droppable: {
+    type: Boolean,
+    default: true
   },
   dragoverClass: {
     type: String,

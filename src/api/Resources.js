@@ -36,6 +36,7 @@ function toGroup(val, eventMap) {
     nOrder: val.nOrder,
     isGroup: true,
     isCollapsed,
+    isEventDroppable: val.isEventDroppable ?? true,
     resources: sortByNOrder(val.resources.map(v => toResource(v, eventMap.get(v.id)))),
     data: removeKeys(val, Constants.EXCLUDED_RESOURCE_FIELDS),
     open: () => collapsedSet.delete(val.id),
@@ -47,6 +48,7 @@ function toResource(val, events = new Set()) {
   return {
     id: val.id,
     nOrder: val.nOrder,
+    isEventDroppable: val.isEventDroppable ?? true,
     maxEvents: Math.max(...Array.from(events.values()).map(v => v.size), 1),
     data: removeKeys(val, Constants.EXCLUDED_RESOURCE_FIELDS)
   }
