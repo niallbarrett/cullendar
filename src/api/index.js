@@ -8,7 +8,7 @@ import buildResources from './Resources'
 import buildCallbacks from './Callbacks'
 import buildUtils from './Utils'
 
-export default function create(options) {
+export default function create(options = {}) {
   const view = computed(() => buildView(options.view))
   const layout = computed(() => buildLayout(options.layout))
 
