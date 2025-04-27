@@ -13,6 +13,7 @@
   ],
   "main": "./dist/cullendar.umd.cjs",
   "module": "./dist/cullendar.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/cullendar.js",
@@ -22,15 +23,18 @@
   },
   "scripts": {
     "dev": "cd dev && vite",
-    "build": "vite build",
+    "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
     "@tanstack/vue-virtual": "^3.13.6",
     "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/tsconfig": "^0.7.0",
     "temporal-polyfill": "^0.3.0",
+    "typescript": "^5.8.3",
     "vite": "^6.2.0",
-    "vue": "^3.5.13"
+    "vue": "^3.5.13",
+    "vue-tsc": "^2.2.10"
   },
   "peerDependencies": {
     "vue": "^3.0.0"

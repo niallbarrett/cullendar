@@ -1,10 +1,12 @@
 // Libraries
 import { Temporal } from 'temporal-polyfill'
+// Types
+import type { Event, BuildEventsResult } from '../types'
 // Utils
 import toArray from '../utils/ToArray'
 import getOrSet from '../utils/map/GetOrSet'
 
-export default function build(events = [], timezone) {
+export default function build(events: Event[] = [], timezone: string): BuildEventsResult {
   const resourceDateMap = new Map()
 
   for (var i = 0; i < events.length; i++) {

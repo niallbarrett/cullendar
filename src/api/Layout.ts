@@ -1,6 +1,9 @@
+// API
 import DEFAULTS from './Defaults'
+// Types
+import type { BuildLayoutOptions, BuildLayoutResult } from '../types'
 
-export default function build(options = {}) {
+export default function build(options: BuildLayoutOptions = {}): BuildLayoutResult {
   return {
     daySize: options.daySize ?? DEFAULTS.daySize,
     dayHeadSize: options.dayHeadSize ?? DEFAULTS.dayHeadSize,

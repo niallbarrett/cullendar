@@ -1,4 +1,4 @@
-import path from 'path'
+import { resolve } from 'path'
 import { defineConfig } from 'vite'
 // Plugins
 import vue from '@vitejs/plugin-vue'
@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [vue()],
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/index.js'),
+      entry: resolve(__dirname, 'src/index.ts'),
       name: 'Cullendar',
       fileName: 'cullendar'
     },
@@ -17,6 +17,6 @@ export default defineConfig({
     }
   },
   resolve: {
-    extensions: ['.js', '.vue', '.json']
+    extensions: ['.js', '.ts', '.vue']
   }
 })
