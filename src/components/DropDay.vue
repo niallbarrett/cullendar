@@ -22,14 +22,16 @@ import Constants from '../api/Constants'
 // Utils
 import toArray from '../utils/ToArray'
 
-const props = defineProps<{
+interface Props {
   date: string,
   resource: InternalResource,
   events: Event[],
-  droppable: boolean,
+  droppable?: boolean,
   dragoverClass?: string,
   resizeoverClass?: string
-}>()
+}
+
+const props = withDefaults(defineProps<Props>(), { droppable: true })
 
 const api = inject('api') as BuildApiResult
 const { view, callbacks, resizeMap } = toRefs(api)
