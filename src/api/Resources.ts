@@ -1,5 +1,7 @@
 // Libraries
 import { reactive } from 'vue'
+// Types
+import type { InternalResource, InternalResourceGroup, Resource, DateEventsMap, BuildEventsResult, BuildResourcesResult } from '../types'
 // API
 import Constants from './Constants'
 // Utils
@@ -7,7 +9,7 @@ import removeKeys from '../utils/object/RemoveKeys'
 
 const collapsedSet = reactive(new Set())
 
-export default function build(resources = [], eventMap = new Map()) {
+export default function build(resources: Resource[] = [], eventMap: BuildEventsResult = new Map()): BuildResourcesResult {
   const sorted = sortByNOrder(resources)
   const resourceMap = new Map()
 
@@ -17,7 +19,7 @@ export default function build(resources = [], eventMap = new Map()) {
 
     resourceMap.set(parent.id, parent)
 
-    if (parent.isGroup && !parent.isCollapsed && parent.resources.length) {
+    if ('isGroup' in parent && !parent.isCollapsed && parent.resources.length) {
       for (var j = 0; j < parent.resources.length; j++) {
         const child = parent.resources[j]
         resourceMap.set(child.id, child)
@@ -28,7 +30,7 @@ export default function build(resources = [], eventMap = new Map()) {
   return resourceMap
 }
 
-function toGroup(val, eventMap) {
+function toGroup(val: Resource, eventMap: BuildEventsResult): InternalResourceGroup {
   const isCollapsed = collapsedSet.has(val.id)
 
   return {
@@ -36,15 +38,14 @@ function toGroup(val, eventMap) {
     nOrder: val.nOrder,
     isGroup: true,
     isCollapsed,
-    isEventDroppable: val.isEventDroppable ?? true,
-    resources: sortByNOrder(val.resources.map(v => toResource(v, eventMap.get(v.id)))),
+    resources: sortByNOrder(val.resources!.map(v => toResource(v, eventMap.get(v.id)))),
     data: removeKeys(val, Constants.EXCLUDED_RESOURCE_FIELDS),
     open: () => collapsedSet.delete(val.id),
     close: () => collapsedSet.add(val.id)
   }
 }
 
-function toResource(val, events = new Set()) {
+function toResource(val: Resource, events: DateEventsMap = new Map()): InternalResource {
   return {
     id: val.id,
     nOrder: val.nOrder,
@@ -54,6 +55,6 @@ function toResource(val, events = new Set()) {
   }
 }
 
-function sortByNOrder(arr) {
+function sortByNOrder(arr: Resource[]): Resource[] {
   return arr.toSorted((a, b) => (a.nOrder ?? Number.MAX_SAFE_INTEGER) - (b.nOrder ?? Number.MAX_SAFE_INTEGER))
 }

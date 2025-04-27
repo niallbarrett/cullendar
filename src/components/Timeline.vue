@@ -1,5 +1,6 @@
 <template>
   <RowVirtualiser
+    :rows="rows"
     :layout="layout"
     :wrapper-style="wrapperStyle"
     :class="['cullendar-timeline', layout.timelineClass]">
@@ -26,26 +27,26 @@
   </RowVirtualiser>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 // Libraries
-import { ref, computed, toRefs, watch, onMounted, onUnmounted, inject } from 'vue'
-import { useVirtualizer } from '@tanstack/vue-virtual'
+import { ref, computed, toRefs, watch, onMounted, onUnmounted, inject, type CSSProperties } from 'vue'
+import { useVirtualizer, type VirtualItem } from '@tanstack/vue-virtual'
+// Types
+import type { InternalResource, InternalResourceGroup, BuildApiResult } from '../types'
 // Utils
 import toPx from '../utils/format/ToPx'
 // Components
-import RowVirtualiser from './RowVirtualiser'
+import RowVirtualiser from './RowVirtualiser.vue'
 
-const props = defineProps({
-  columns: {
-    type: Array,
-    default: () => []
-  }
-})
+const props = defineProps<{
+  rows: (InternalResource | InternalResourceGroup)[],
+  columns: string[]
+}>()
 
-const api = inject('api')
+const api = inject('api') as BuildApiResult
 const { layout } = toRefs(api)
 
-let observer
+let observer: ResizeObserver
 const el = ref()
 const daySize = ref(layout.value.daySize)
 
@@ -67,14 +68,14 @@ const wrapperStyle = computed(() => ({ width: toPx(totalSizeColumns.value) }))
 watch([() => props.columns, () => layout.value.daySize], () => updateDaySize())
 
 onMounted(() => {
-  el.value = document.querySelector('.cullendar-timeline')
+  el.value = document.querySelector('.cullendar-timeline') as HTMLElement
   observer = new ResizeObserver(([entry]) => entry && updateDaySize(entry.contentRect.width))
 
   observer.observe(el.value)
 })
 onUnmounted(() => observer.unobserve(el.value))
 
-function updateDaySize(rectWidth) {
+function updateDaySize(rectWidth?: number): void {
   const clientWidth = rectWidth ?? el.value.clientWidth
   const totalGap = layout.value.gap * (props.columns.length - 1)
   const totalWidth = clientWidth - totalGap
@@ -86,14 +87,14 @@ function updateDaySize(rectWidth) {
   daySize.value = newDaySize
   virtualizer.value.measure()
 }
-function toHeadStyle(col) {
+function toHeadStyle(col: VirtualItem): CSSProperties {
   return {
     height: toPx(layout.value.dayHeadSize),
     width: toPx(daySize.value),
     transform: `translateX(${toPx(col.start)}) translateY(0)`
   }
 }
-function toColStyle(row, col) {
+function toColStyle(row: VirtualItem, col: VirtualItem): CSSProperties {
   return {
     width: toPx(daySize.value),
     height: toPx(row.size),

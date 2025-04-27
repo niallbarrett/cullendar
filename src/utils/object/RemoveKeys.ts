@@ -1,6 +1,6 @@
 import toArray from '../ToArray'
 
-export default function removeKeys(obj, keyOrKeys) {
+export default function removeKeys(obj: object, keyOrKeys: string | string[]): object {
   const entries = Object.entries(obj)
   const keys = toArray(keyOrKeys)
 

@@ -5,7 +5,7 @@
       ref="resourcesRef"
       :rows="rows"
       @scroll.passive="syncScroll('resources', $event)">
-      <slot v-if="resource.isGroup" name="resourceGroup" v-bind="{ resource }"/>
+      <slot v-if="'isGroup' in resource" name="resourceGroup" v-bind="{ resource }"/>
       <slot v-else name="resource" v-bind="{ resource }"/>
     </Resources>
     <Timeline
@@ -18,7 +18,7 @@
       </template>
       <template #default="{ resource, date }">
         <Day
-          v-if="!resource.isGroup"
+          v-if="!('isGroup' in resource)"
           v-slot="{ events }"
           :date="date"
           :resource="resource">
@@ -36,35 +36,32 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 // Libraries
 import { ref, computed, toRefs, provide } from 'vue'
+// Types
+import type { InternalResource, InternalResourceGroup, BuildApiResult } from './types'
 // Utils
 import getScrollbarWidth from './utils/GetScrollbarWidth'
 // Components
-import Timeline from './components/Timeline'
-import Resources from './components/Resources'
-import Day from './components/Day'
+import Timeline from './components/Timeline.vue'
+import Resources from './components/Resources.vue'
+import Day from './components/Day.vue'
 
-const props = defineProps({
-  cullendar: {
-    type: Object,
-    required: true
-  }
-})
+const props = defineProps<{ cullendar: BuildApiResult }>()
 
 provide('api', props.cullendar)
 
-let frame = null
+let frame: number | null = null
 
 const resourcesRef = ref()
 const timelineRef = ref()
 
 const { view, resources } = toRefs(props.cullendar)
 
-const rows = computed(() => Array.from(resources.value.values()))
+const rows = computed<(InternalResource | InternalResourceGroup)[]>(() => Array.from(resources.value.values()))
 
-function syncScroll(source, e) {
+function syncScroll(source: 'resources' | 'timeline', e: Event): void {
   if (frame)
     cancelAnimationFrame(frame)
 
@@ -72,7 +69,10 @@ function syncScroll(source, e) {
     frame = null
 
     const target = source === 'resources' ? timelineRef : resourcesRef
-    target.value.$el.scrollTop = e.target.scrollTop
+    const targetEl = target.value.$el as HTMLElement
+    const sourceEl = e.target as HTMLElement
+
+    targetEl.scrollTop = sourceEl.scrollTop
   })
 }
 
