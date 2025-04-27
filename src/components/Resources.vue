@@ -1,6 +1,7 @@
 <template>
   <RowVirtualiser
     v-slot="{ row, data }"
+    :rows="rows"
     :layout="layout"
     :class="['cullendar-resources', layout.resourcesClass]">
     <div class="cullendar-resources-virtual-row" :style="toStyle(row)">
@@ -14,11 +15,13 @@
 import { inject, toRefs, type CSSProperties } from 'vue'
 // Types
 import type { VirtualItem } from '@tanstack/vue-virtual'
-import type { BuildApiResult } from '../types'
+import type { InternalResource, InternalResourceGroup, BuildApiResult } from '../types'
 // Utils
 import toPx from '../utils/format/ToPx'
 // Components
-import RowVirtualiser from './RowVirtualiser'
+import RowVirtualiser from './RowVirtualiser.vue'
+
+defineProps<{ rows: (InternalResource | InternalResourceGroup)[] }>()
 
 const api = inject('api') as BuildApiResult
 const { layout } = toRefs(api)

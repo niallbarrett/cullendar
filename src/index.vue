@@ -44,9 +44,9 @@ import type { InternalResource, InternalResourceGroup, BuildApiResult } from './
 // Utils
 import getScrollbarWidth from './utils/GetScrollbarWidth'
 // Components
-import Timeline from './components/Timeline'
-import Resources from './components/Resources'
-import Day from './components/Day'
+import Timeline from './components/Timeline.vue'
+import Resources from './components/Resources.vue'
+import Day from './components/Day.vue'
 
 const props = defineProps<{ cullendar: BuildApiResult }>()
 

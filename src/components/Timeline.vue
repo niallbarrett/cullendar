@@ -1,5 +1,6 @@
 <template>
   <RowVirtualiser
+    :rows="rows"
     :layout="layout"
     :wrapper-style="wrapperStyle"
     :class="['cullendar-timeline', layout.timelineClass]">
@@ -31,13 +32,16 @@
 import { ref, computed, toRefs, watch, onMounted, onUnmounted, inject, type CSSProperties } from 'vue'
 import { useVirtualizer, type VirtualItem } from '@tanstack/vue-virtual'
 // Types
-import type { BuildApiResult } from '../types'
+import type { InternalResource, InternalResourceGroup, BuildApiResult } from '../types'
 // Utils
 import toPx from '../utils/format/ToPx'
 // Components
-import RowVirtualiser from './RowVirtualiser'
+import RowVirtualiser from './RowVirtualiser.vue'
 
-const props = defineProps<{ columns: string[] }>()
+const props = defineProps<{
+  rows: (InternalResource | InternalResourceGroup)[],
+  columns: string[]
+}>()
 
 const api = inject('api') as BuildApiResult
 const { layout } = toRefs(api)
