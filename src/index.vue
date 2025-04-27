@@ -5,7 +5,7 @@
       ref="resourcesRef"
       :rows="rows"
       @scroll.passive="syncScroll('resources', $event)">
-      <slot v-if="resource.isGroup" name="resourceGroup" v-bind="{ resource }"/>
+      <slot v-if="'isGroup' in resource" name="resourceGroup" v-bind="{ resource }"/>
       <slot v-else name="resource" v-bind="{ resource }"/>
     </Resources>
     <Timeline
@@ -18,7 +18,7 @@
       </template>
       <template #default="{ resource, date }">
         <Day
-          v-if="!resource.isGroup"
+          v-if="!('isGroup' in resource)"
           v-slot="{ events }"
           :date="date"
           :resource="resource">
