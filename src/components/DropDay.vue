@@ -11,59 +11,43 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 // Libraries
 import { ref, computed, toRefs, inject } from 'vue'
 import { Temporal } from 'temporal-polyfill'
+// Types
+import type { Event, InternalResource, BuildApiResult, ToPayloadOptions, DragDropNewTimesResult, DragDropCallbackPayload } from '../types'
 // API
 import Constants from '../api/Constants'
 // Utils
 import toArray from '../utils/ToArray'
 
-const props = defineProps({
-  date: {
-    type: String,
-    required: true
-  },
-  resource: {
-    type: Object,
-    required: true
-  },
-  events: {
-    type: Array,
-    required: true
-  },
-  droppable: {
-    type: Boolean,
-    default: true
-  },
-  dragoverClass: {
-    type: String,
-    default: ''
-  },
-  resizeoverClass: {
-    type: String,
-    default: ''
-  }
-})
+const props = defineProps<{
+  date: string,
+  resource: InternalResource,
+  events: Event[],
+  droppable: boolean,
+  dragoverClass?: string,
+  resizeoverClass?: string
+}>()
 
-const api = inject('api')
+const api = inject('api') as BuildApiResult
 const { view, callbacks, resizeMap } = toRefs(api)
 
 const isDragOver = ref(false)
 const isResizeOver = computed(() => !!resizeMap.value.get(props.resource.id)?.includes(props.date))
 
-const classes = computed(() => ({
-  [props.dragoverClass]: isDragOver.value,
-  [props.resizeoverClass]: isResizeOver.value
-}))
+const classes = computed(() => [
+  isDragOver.value && props.dragoverClass,
+  isResizeOver.value && props.resizeoverClass
+].filter(Boolean).join(' '))
 
-function onDragenter(e) {
-  if (e.dataTransfer.types.includes(Constants.DATA_TRANSFER_TYPE))
+function onDragenter(e: DragEvent): void {
+  if (e.dataTransfer && e.dataTransfer.types.includes(Constants.DATA_TRANSFER_TYPE))
     isDragOver.value = true
 }
-function onDrop(e) {
-  if (!e.dataTransfer.types.includes(Constants.DATA_TRANSFER_TYPE))
+function onDrop(e: DragEvent): void {
+  if (!e.dataTransfer || !e.dataTransfer.types.includes(Constants.DATA_TRANSFER_TYPE))
     return
 
   isDragOver.value = false
@@ -86,7 +70,7 @@ function onDrop(e) {
 
   callbacks.value.onMoveEvent(payload)
 }
-function toNewTimes(event) {
+function toNewTimes(event: Event): DragDropNewTimesResult {
   const day = Temporal.PlainDate.from(props.date)
   const start = Temporal.Instant.from(event.start).toZonedDateTimeISO(view.value.timezone)
   const end = Temporal.Instant.from(event.end).toZonedDateTimeISO(view.value.timezone)
@@ -103,7 +87,7 @@ function toNewTimes(event) {
     end: newStart.add(duration).toString({ timeZoneName: 'never' })
   }
 }
-function toPayload(options = {}) {
+function toPayload(options: ToPayloadOptions = {}): DragDropCallbackPayload {
   return {
     ...options,
     date: props.date,

@@ -9,18 +9,21 @@
   </RowVirtualiser>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 // Libraries
-import { inject, toRefs } from 'vue'
+import { inject, toRefs, type CSSProperties } from 'vue'
+// Types
+import type { VirtualItem } from '@tanstack/vue-virtual'
+import type { BuildApiResult } from '../types'
 // Utils
 import toPx from '../utils/format/ToPx'
 // Components
 import RowVirtualiser from './RowVirtualiser'
 
-const api = inject('api')
+const api = inject('api') as BuildApiResult
 const { layout } = toRefs(api)
 
-function toStyle(row) {
+function toStyle(row: VirtualItem): CSSProperties {
   return {
     height: toPx(row.size),
     transform: `translateY(${toPx(row.start)})`

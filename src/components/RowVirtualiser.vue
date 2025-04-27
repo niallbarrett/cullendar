@@ -10,29 +10,22 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 // Libraries
-import { ref, computed, watch } from 'vue'
-import { useVirtualizer } from '@tanstack/vue-virtual'
+import { ref, computed, watch, type Ref, type CSSProperties } from 'vue'
+import { useVirtualizer, type Virtualizer } from '@tanstack/vue-virtual'
+// Types
+import type { InternalResource, InternalResourceGroup, BuildLayoutResult } from '../types'
 // Utils
 import toPx from '../utils/format/ToPx'
 
-const props = defineProps({
-  rows: {
-    type: Array,
-    default: () => []
-  },
-  layout: {
-    type: Object,
-    required: true
-  },
-  wrapperStyle: {
-    type: Object,
-    default: undefined
-  }
-})
+const props = defineProps<{
+  rows: (InternalResource | InternalResourceGroup)[],
+  layout: BuildLayoutResult,
+  wrapperStyle?: object
+}>()
 
-const el = ref(null)
+const el = ref<HTMLElement | null>(null)
 
 const options = computed(() => ({
   count: props.rows.length,
@@ -43,21 +36,21 @@ const options = computed(() => ({
   overscan: props.layout.overscan
 }))
 
-const virtualizer = useVirtualizer(options)
+const virtualizer: Ref<Virtualizer<HTMLElement, Element>> = useVirtualizer(options)
 
 const virtualRows = computed(() => virtualizer.value.getVirtualItems())
 const totalSize = computed(() => virtualizer.value.getTotalSize())
-const wrapperStyle = computed(() => ({
+const wrapperStyle = computed<CSSProperties>(() => ({
   height: toPx(totalSize.value),
   ...props.wrapperStyle
 }))
 
 watch(() => props.rows, () => virtualizer.value.measure())
 
-function estimateSize(index) {
+function estimateSize(index: number): number {
   const resource = props.rows[index]
 
-  if (resource.isGroup)
+  if ('isGroup' in resource)
     return props.layout.resourceGroupSize
 
   return resource.maxEvents * props.layout.eventSize
