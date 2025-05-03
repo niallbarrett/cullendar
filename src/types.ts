@@ -42,6 +42,8 @@ export interface BuildApiOptions {
 }
 
 export interface BuildApiResult extends UnwrapRef<{
+  id: Ref<string>,
+  elements: Ref<BuildElementsResult>,
   view: ComputedRef<BuildViewResult>,
   layout: ComputedRef<BuildLayoutResult>,
   events: ComputedRef<BuildEventsResult>,
@@ -65,6 +67,12 @@ export interface BuildViewResult {
   nWeeks: number,
   firstDayOfWeek: number,
   dates: string[]
+}
+
+export interface BuildElementsResult {
+  calendar: HTMLElement,
+  timeline: HTMLElement,
+  resources: HTMLElement
 }
 
 export interface BuildLayoutOptions {

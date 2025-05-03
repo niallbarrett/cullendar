@@ -2,6 +2,8 @@
 import { ref, computed, reactive, unref, watch } from 'vue'
 // Types
 import type { BuildApiOptions, BuildApiResult } from '../types'
+// Utils
+import randomString from '../utils/string/Random'
 // API
 import buildView from './View'
 import buildLayout from './Layout'
@@ -11,6 +13,10 @@ import buildCallbacks from './Callbacks'
 import buildUtils from './Utils'
 
 export default function create(options: BuildApiOptions = {}): BuildApiResult {
+  const id = randomString()
+  const elements = ref()
+  const resizeMap = ref(new Map())
+
   const view = computed(() => buildView(options.view))
   const layout = computed(() => buildLayout(options.layout))
 
@@ -20,11 +26,11 @@ export default function create(options: BuildApiOptions = {}): BuildApiResult {
   const callbacks = computed(() => buildCallbacks(options.callbacks))
   const utils = buildUtils(events, resources)
 
-  const resizeMap = ref(new Map())
-
   watch(view, () => callbacks.value.onView(view.value))
 
   const api: BuildApiResult = reactive({
+    id,
+    elements,
     view,
     layout,
     events,
