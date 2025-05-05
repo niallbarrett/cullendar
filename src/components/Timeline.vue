@@ -35,6 +35,8 @@ import { useVirtualizer, type VirtualItem } from '@tanstack/vue-virtual'
 import type { InternalResource, InternalResourceGroup, BuildApiResult } from '../types'
 // Utils
 import toPx from '../utils/format/ToPx'
+// API
+import buildElements from '../api/Elements'
 // Components
 import RowVirtualiser from './RowVirtualiser.vue'
 
@@ -44,16 +46,15 @@ const props = defineProps<{
 }>()
 
 const api = inject('api') as BuildApiResult
-const { layout } = toRefs(api)
+const { id, elements, layout } = toRefs(api)
 
 let observer: ResizeObserver
-const el = ref()
 const daySize = ref(layout.value.daySize)
 
 const options = computed(() => ({
   horizontal: true,
   count: props.columns.length,
-  getScrollElement: () => el.value,
+  getScrollElement: () => elements.value?.timeline,
   estimateSize: () => daySize.value,
   gap: layout.value.gap,
   overscan: layout.value.overscan
@@ -68,15 +69,15 @@ const wrapperStyle = computed(() => ({ width: toPx(totalSizeColumns.value) }))
 watch([() => props.columns, () => layout.value.daySize], () => updateDaySize())
 
 onMounted(() => {
-  el.value = document.querySelector('.cullendar-timeline') as HTMLElement
-  observer = new ResizeObserver(([entry]) => entry && updateDaySize(entry.contentRect.width))
+  elements.value = buildElements(id.value)
 
-  observer.observe(el.value)
+  observer = new ResizeObserver(([entry]) => entry && updateDaySize(entry.contentRect.width))
+  observer.observe(elements.value.timeline)
 })
-onUnmounted(() => observer.unobserve(el.value))
+onUnmounted(() => observer.unobserve(elements.value.timeline))
 
 function updateDaySize(rectWidth?: number): void {
-  const clientWidth = rectWidth ?? el.value.clientWidth
+  const clientWidth = rectWidth ?? elements.value.timeline.clientWidth
   const totalGap = layout.value.gap * (props.columns.length - 1)
   const totalWidth = clientWidth - totalGap
   const newDaySize = Math.max(layout.value.daySize, Math.floor(totalWidth / props.columns.length))

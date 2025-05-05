@@ -1,18 +1,17 @@
 <template>
-  <div class="cullendar" :style="{'--scrollbar-width': getScrollbarWidth() }">
+  <div
+    :id="id"
+    :style="{'--scrollbar-width': getScrollbarWidth() }"
+    class="cullendar">
     <Resources
       v-slot="{ resource }"
-      ref="resourcesRef"
-      :rows="rows"
-      @scroll.passive="syncScroll('resources', $event)">
+      :rows="rows">
       <slot v-if="'isGroup' in resource" name="resourceGroup" v-bind="{ resource }"/>
       <slot v-else name="resource" v-bind="{ resource }"/>
     </Resources>
     <Timeline
-      ref="timelineRef"
       :rows="rows"
-      :columns="view.dates"
-      @scroll.passive="syncScroll('timeline', $event)">
+      :columns="view.dates">
       <template #head="{ date }">
         <slot name="dayHead" v-bind="{ date }"/>
       </template>
@@ -38,7 +37,7 @@
 
 <script lang="ts" setup>
 // Libraries
-import { ref, computed, toRefs, provide } from 'vue'
+import { computed, toRefs, provide, onMounted } from 'vue'
 // Types
 import type { InternalResource, InternalResourceGroup, BuildApiResult } from './types'
 // Utils
@@ -52,28 +51,23 @@ const props = defineProps<{ cullendar: BuildApiResult }>()
 
 provide('api', props.cullendar)
 
-let frame: number | null = null
-
-const resourcesRef = ref()
-const timelineRef = ref()
-
-const { view, resources } = toRefs(props.cullendar)
+const { id, elements, view, resources } = toRefs(props.cullendar)
 
 const rows = computed<(InternalResource | InternalResourceGroup)[]>(() => Array.from(resources.value.values()))
 
-function syncScroll(source: 'resources' | 'timeline', e: Event): void {
-  if (frame)
-    cancelAnimationFrame(frame)
+onMounted(() => {
+  elements.value.timeline.addEventListener('scroll', onScroll)
+  elements.value.resources.addEventListener('scroll', onScroll)
+})
 
-  frame = requestAnimationFrame(() => {
-    frame = null
+function onScroll(e: Event): void {
+  const target = e.target as HTMLElement
+  const syncTarget = target.classList.contains('cullendar-timeline') ? elements.value.resources : elements.value.timeline
 
-    const target = source === 'resources' ? timelineRef : resourcesRef
-    const targetEl = target.value.$el as HTMLElement
-    const sourceEl = e.target as HTMLElement
+  syncTarget.removeEventListener('scroll', onScroll)
+  syncTarget.scrollTop = target.scrollTop
 
-    targetEl.scrollTop = sourceEl.scrollTop
-  })
+  requestAnimationFrame(() => syncTarget.addEventListener('scroll', onScroll))
 }
 
 defineOptions({ name: 'Cullendar' })

@@ -23,7 +23,7 @@ const props = defineProps<{
 }>()
 
 const api = inject('api') as BuildApiResult
-const { view, layout, callbacks, resizeMap } = toRefs(api)
+const { elements, view, layout, callbacks, resizeMap } = toRefs(api)
 
 let prevDeltaDays: number = 0
 
@@ -32,7 +32,6 @@ const daySize = ref(0)
 const isResizing = ref(false)
 
 function onMousedown(e: MouseEvent): void {
-  const el = document.querySelector('.cullendar') as HTMLElement
   const colEl = document.querySelector('.cullendar-timeline-virtual-col') as HTMLElement
 
   isResizing.value = true
@@ -41,7 +40,7 @@ function onMousedown(e: MouseEvent): void {
 
   document.addEventListener('mousemove', onMousemove)
   document.addEventListener('mouseup', onMouseup)
-  el.classList.add(Constants.RESIZING_CLASS)
+  elements.value.calendar.classList.add(Constants.RESIZING_CLASS)
 }
 function onMousemove(e: MouseEvent): void {
   const deltaX = Math.max(0, e.x - startX.value)
@@ -54,7 +53,6 @@ function onMousemove(e: MouseEvent): void {
   resizeMap.value.set(props.resource.id, getDeltaDays(deltaDays))
 }
 function onMouseup(): void {
-  const el = document.querySelector('.cullendar') as HTMLElement
   const dates = resizeMap.value.get(props.resource.id) || []
 
   prevDeltaDays = 0
@@ -64,7 +62,7 @@ function onMouseup(): void {
 
   document.removeEventListener('mousemove', onMousemove)
   document.removeEventListener('mouseup', onMouseup)
-  el.classList.remove(Constants.RESIZING_CLASS)
+  elements.value.calendar.classList.remove(Constants.RESIZING_CLASS)
 
   if (!dates.length)
     return
