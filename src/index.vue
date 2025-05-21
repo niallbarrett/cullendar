@@ -1,7 +1,7 @@
 <template>
   <div
     :id="id"
-    :style="{'--scrollbar-width': getScrollbarWidth() }"
+    :style="setStyle()"
     class="cullendar">
     <Resources
       v-slot="{ resource }"
@@ -37,7 +37,7 @@
 
 <script lang="ts" setup>
 // Libraries
-import { computed, toRefs, provide, onMounted } from 'vue'
+import { computed, toRefs, provide, onMounted, type CSSProperties } from 'vue'
 // Types
 import type { InternalResource, InternalResourceGroup, BuildApiResult } from './types'
 // Utils
@@ -60,6 +60,9 @@ onMounted(() => {
   elements.value.resources.addEventListener('scroll', onScroll)
 })
 
+function setStyle(): CSSProperties {
+  return { '--scrollbar-width': getScrollbarWidth() }
+}
 function onScroll(e: Event): void {
   const target = e.target as HTMLElement
   const syncTarget = target.classList.contains('cullendar-timeline') ? elements.value.resources : elements.value.timeline
