@@ -56,5 +56,5 @@ function toResource(val: Resource, events: DateEventsMap = new Map()): InternalR
 }
 
 function sortByNOrder(arr: Resource[]): Resource[] {
-  return arr.toSorted((a, b) => (a.nOrder ?? Number.MAX_SAFE_INTEGER) - (b.nOrder ?? Number.MAX_SAFE_INTEGER))
+  return arr.slice().sort((a, b) => (a.nOrder ?? Number.MAX_SAFE_INTEGER) - (b.nOrder ?? Number.MAX_SAFE_INTEGER))
 }
